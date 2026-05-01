@@ -4,10 +4,12 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import {
-  Bot, Zap, Code2, Building2, ArrowRight,
+  Brain, Workflow, Code2, Building2, ArrowRight,
   Sparkles, Shield, Globe, TrendingUp, CheckCircle2,
-  Brain, Workflow, BarChart3, Layers, Users, ChevronRight
+  Zap, BarChart3, Layers, ChevronRight
 } from "lucide-react";
+import { useLang } from "@/lib/LangContext";
+import { translations } from "@/lib/translations";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -25,107 +27,64 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-const services = [
-  {
-    icon: Brain, accent: "blue",
-    title: "AI Solutions",
-    desc: "AI agents, copilots, chatbots, and automated workflows tailored to your business.",
-    items: ["AI Agents & Copilots", "Intelligent Chatbots", "AI Workflow Automation"],
-  },
-  {
-    icon: Code2, accent: "orange",
-    title: "Application Development",
-    desc: "Modern web applications, business platforms, client portals and powerful dashboards.",
-    items: ["Web Applications", "Business Platforms", "Dashboards & BI"],
-  },
-  {
-    icon: Workflow, accent: "blue",
-    title: "Process Automation",
-    desc: "Digitize operations, automate workflows, connect your Microsoft 365 ecosystem.",
-    items: ["Workflow Digitization", "MS 365 Automation", "Reporting Systems"],
-  },
-  {
-    icon: Building2, accent: "orange",
-    title: "Enterprise Solutions",
-    desc: "Internal tools, operations platforms, monitoring systems for large organizations.",
-    items: ["Internal Tools", "Operations Platforms", "Digital Transformation"],
-  },
-];
-
-const stats = [
-  { value: "50+", label: "Projects Delivered" },
-  { value: "15+", label: "Enterprise Clients" },
-  { value: "5", label: "Industries Served" },
-  { value: "100%", label: "Client Satisfaction" },
-];
-
-const reasons = [
-  { icon: Sparkles, title: "AI-First Approach", desc: "Intelligence built in from day one — not added as an afterthought." },
-  { icon: TrendingUp, title: "Business-First Thinking", desc: "Every solution is measured by your outcomes, not feature counts." },
-  { icon: Zap, title: "Rapid Execution", desc: "From concept to production in weeks. Speed without compromise." },
-  { icon: Shield, title: "Enterprise Grade", desc: "Built for scale, security, and the reliability your operations demand." },
-  { icon: Globe, title: "Built for Africa", desc: "Deep understanding of local markets, constraints, and growth ambitions." },
-  { icon: Layers, title: "Modern Stack", desc: "Technologies chosen for performance and long-term maintainability." },
-];
+const serviceIcons = [Brain, Code2, Workflow, Building2];
+const reasonIcons = [Sparkles, TrendingUp, Zap, Shield, Globe, Layers];
 
 export default function HomePage() {
+  const { lang } = useLang();
+  const t = translations[lang].home;
+
   return (
     <div className="relative overflow-hidden">
 
       {/* ─── HERO ─── */}
       <section className="relative min-h-screen flex items-center pt-20">
         <div className="absolute inset-0 bg-gradient-to-b from-[#03070F] via-dark-900 to-dark-900" />
-        {/* Glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-primary/6 rounded-full blur-[140px]" />
         <div className="absolute top-20 right-1/3 w-48 h-48 bg-orange-primary/5 rounded-full blur-[80px]" />
-        {/* Grid */}
         <div className="absolute inset-0 opacity-[0.025]"
           style={{ backgroundImage: `linear-gradient(rgba(26,107,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(26,107,255,1) 1px, transparent 1px)`, backgroundSize: "64px 64px" }} />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
           <div className="max-w-4xl">
-            {/* Badge */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
               className="badge mb-8 w-fit">
               <span className="w-1.5 h-1.5 bg-orange-primary animate-pulse" />
-              AI-Powered Solutions for African Enterprises
+              {t.badge}
             </motion.div>
 
-            {/* Heading */}
             <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1 }}
               className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[1.04] mb-6">
-              <span className="text-white">Build Smarter.</span><br />
-              <span className="text-gradient-orange">Move Faster.</span><br />
-              <span className="text-white">Scale Further.</span>
+              <span className="text-white">{t.h1a}</span><br />
+              <span className="text-gradient-orange">{t.h1b}</span><br />
+              <span className="text-white">{t.h1c}</span>
             </motion.h1>
 
             <motion.p initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.2 }}
               className="text-lg sm:text-xl text-slate-text max-w-2xl mb-10 leading-relaxed">
-              NovaStack Africa delivers enterprise AI, automation, and custom software solutions
-              that accelerate your digital transformation across Africa.
+              {t.subtitle}
             </motion.p>
 
-            {/* CTAs */}
             <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.3 }}
               className="flex flex-col sm:flex-row gap-4">
               <Link href="/contact" className="btn-primary group">
-                Book a Consultation
+                {t.ctaPrimary}
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link href="/services" className="btn-outline group">
-                Explore Services
+                {t.ctaSecondary}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </div>
 
-          {/* Stats row */}
+          {/* Pillars — honnêtes, pas de faux chiffres */}
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.55 }}
             className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-slate-border/30 border border-slate-border/30 w-fit">
-            {stats.map((s) => (
-              <div key={s.label} className="bg-dark-800 px-8 py-5 text-center">
-                <div className="text-3xl font-black text-gradient-blue mb-1">{s.value}</div>
-                <div className="text-xs text-slate-text uppercase tracking-wider font-medium">{s.label}</div>
+            {t.pillars.map((p) => (
+              <div key={p.value} className="bg-dark-800 px-6 py-5">
+                <div className="text-xl font-black text-gradient-blue mb-1 leading-none">{p.value}</div>
+                <div className="text-xs text-slate-text leading-snug mt-1 max-w-[130px]">{p.label}</div>
               </div>
             ))}
           </motion.div>
@@ -137,30 +96,29 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
             <motion.div variants={fadeUp} className="mb-14">
-              <p className="label-orange mb-3">What We Build</p>
+              <p className="label-orange mb-3">{t.sectionServicesLabel}</p>
               <h2 className="text-4xl lg:text-5xl font-black text-white max-w-xl leading-tight">
-                End-to-end digital solutions
+                {t.sectionServicesTitle}
               </h2>
-              <p className="text-slate-text mt-3 max-w-xl">
-                From AI agents to enterprise platforms — the full spectrum of modern software.
-              </p>
+              <p className="text-slate-text mt-3 max-w-xl">{t.sectionServicesSubtitle}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-border/20">
-              {services.map((s) => {
-                const Icon = s.icon;
+              {t.services.map((s, i) => {
+                const Icon = serviceIcons[i];
+                const accent = i % 2 === 0 ? "blue" : "orange";
                 return (
                   <motion.div key={s.title} variants={fadeUp}
                     className="card-dark p-8 group transition-all duration-300">
-                    <div className={s.accent === "blue" ? "icon-box-blue mb-5" : "icon-box-orange mb-5"}>
-                      <Icon className={`w-5 h-5 ${s.accent === "blue" ? "text-white" : "text-orange-primary"}`} />
+                    <div className={accent === "blue" ? "icon-box-blue mb-5" : "icon-box-orange mb-5"}>
+                      <Icon className={`w-5 h-5 ${accent === "blue" ? "text-white" : "text-orange-primary"}`} />
                     </div>
                     <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
                     <p className="text-slate-text text-sm leading-relaxed mb-5">{s.desc}</p>
                     <ul className="space-y-2">
                       {s.items.map((item) => (
                         <li key={item} className="flex items-center gap-2.5 text-sm text-slate-text">
-                          <div className={`w-1 h-1 flex-shrink-0 ${s.accent === "blue" ? "bg-blue-primary" : "bg-orange-primary"}`} />
+                          <div className={`w-1 h-1 flex-shrink-0 ${accent === "blue" ? "bg-blue-primary" : "bg-orange-primary"}`} />
                           {item}
                         </li>
                       ))}
@@ -172,7 +130,7 @@ export default function HomePage() {
 
             <motion.div variants={fadeUp} className="mt-8">
               <Link href="/services" className="inline-flex items-center gap-2 text-orange-primary hover:text-orange-light text-sm font-semibold uppercase tracking-wider transition-colors group">
-                Explore all services
+                {t.seeAllServices}
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
@@ -187,23 +145,14 @@ export default function HomePage() {
           <Section>
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <motion.div variants={fadeUp}>
-                <p className="label-orange mb-3">AI Expertise</p>
+                <p className="label-orange mb-3">{t.aiLabel}</p>
                 <h2 className="text-4xl lg:text-5xl font-black text-white mb-5 leading-tight">
-                  Intelligence embedded in{" "}
-                  <span className="text-gradient-orange">every solution</span>
+                  {t.aiTitle}{" "}
+                  <span className="text-gradient-orange">{t.aiTitleAccent}</span>
                 </h2>
-                <p className="text-slate-text leading-relaxed mb-6">
-                  We don't add AI as an afterthought. Our solutions are architected from the ground up
-                  with artificial intelligence at their core — enabling automation, real-time insights,
-                  and decision support at every level of your operations.
-                </p>
+                <p className="text-slate-text leading-relaxed mb-6">{t.aiText}</p>
                 <ul className="space-y-3 mb-8">
-                  {[
-                    "Custom AI agents that automate complex business workflows",
-                    "Copilots that amplify your team's productivity",
-                    "Predictive models tuned to your industry data",
-                    "Natural language interfaces for existing systems",
-                  ].map((item) => (
+                  {t.aiPoints.map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-slate-text">
                       <CheckCircle2 className="w-4 h-4 text-orange-primary flex-shrink-0 mt-0.5" />
                       {item}
@@ -211,7 +160,7 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <Link href="/services" className="btn-outline w-fit">
-                  Explore AI Solutions <ArrowRight className="w-4 h-4" />
+                  {t.aiCta} <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
 
@@ -227,20 +176,19 @@ export default function HomePage() {
                       </div>
                     </div>
                   </div>
-                  {/* Floating cards */}
                   <div className="absolute top-4 right-4 card-dark p-3 text-xs min-w-[130px]">
                     <div className="flex items-center gap-1.5 mb-1">
                       <div className="w-1.5 h-1.5 bg-green-400 animate-pulse" />
                       <span className="font-semibold text-white">Agent Active</span>
                     </div>
-                    <span className="text-slate-text">1.2k tasks/hr</span>
+                    <span className="text-slate-text">Workflow automatisé</span>
                   </div>
                   <div className="absolute bottom-4 left-4 card-dark p-3 text-xs min-w-[130px]">
                     <div className="flex items-center gap-1.5 mb-1">
                       <div className="w-1.5 h-1.5 bg-orange-primary animate-pulse" />
                       <span className="font-semibold text-white">Automation</span>
                     </div>
-                    <span className="text-slate-text">87% automated</span>
+                    <span className="text-slate-text">Tâches automatisées</span>
                   </div>
                 </div>
               </motion.div>
@@ -254,18 +202,16 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
             <motion.div variants={fadeUp} className="mb-14">
-              <p className="label-blue mb-3">Why NovaStack</p>
+              <p className="label-blue mb-3">{t.whyLabel}</p>
               <h2 className="text-4xl lg:text-5xl font-black text-white max-w-xl leading-tight">
-                The NovaStack difference
+                {t.whyTitle}
               </h2>
-              <p className="text-slate-text mt-3 max-w-lg">
-                Technical depth combined with relentless focus on business outcomes.
-              </p>
+              <p className="text-slate-text mt-3 max-w-lg">{t.whySubtitle}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-border/20 border border-slate-border/20">
-              {reasons.map((r, i) => {
-                const Icon = r.icon;
+              {t.reasons.map((r, i) => {
+                const Icon = reasonIcons[i];
                 return (
                   <motion.div key={r.title} variants={fadeUp}
                     className="card-dark p-6 group transition-all duration-300">
@@ -287,11 +233,11 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
             <motion.div variants={fadeUp} className="mb-10">
-              <p className="label-orange mb-3">Industries</p>
-              <h2 className="text-3xl font-black text-white">Trusted across sectors</h2>
+              <p className="label-orange mb-3">{t.industriesLabel}</p>
+              <h2 className="text-3xl font-black text-white">{t.industriesTitle}</h2>
             </motion.div>
             <motion.div variants={stagger} className="flex flex-wrap gap-2">
-              {["Banking & Finance", "Telecom", "Logistics", "Datacenter", "Retail", "Government", "Healthcare"].map((ind) => (
+              {t.industriesList.map((ind) => (
                 <motion.span key={ind} variants={fadeUp}
                   className="px-4 py-2.5 border border-slate-border/50 text-slate-text text-xs font-semibold uppercase tracking-wider hover:border-orange-primary/50 hover:text-orange-primary transition-all cursor-default">
                   {ind}
@@ -300,7 +246,7 @@ export default function HomePage() {
             </motion.div>
             <motion.div variants={fadeUp} className="mt-6">
               <Link href="/industries" className="inline-flex items-center gap-2 text-orange-primary text-xs font-semibold uppercase tracking-wider hover:text-orange-light transition-colors">
-                Explore all industries <ArrowRight className="w-3.5 h-3.5" />
+                {t.seeAllIndustries} <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </motion.div>
           </Section>
@@ -313,20 +259,20 @@ export default function HomePage() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-blue-primary/6 rounded-full blur-[100px]" />
         <div className="relative max-w-3xl mx-auto px-4 text-center">
           <Section>
-            <motion.p variants={fadeUp} className="label-orange mb-5">Ready to Start?</motion.p>
+            <motion.p variants={fadeUp} className="label-orange mb-5">{t.ctaLabel}</motion.p>
             <motion.h2 variants={fadeUp} className="text-4xl lg:text-5xl font-black text-white mb-5 leading-tight">
-              Let's build something <span className="text-gradient-blue">remarkable</span>
+              {t.ctaTitle} <span className="text-gradient-blue">{t.ctaTitleAccent}</span>
             </motion.h2>
             <motion.p variants={fadeUp} className="text-slate-text text-lg mb-10">
-              Tell us about your challenges. We'll bring the expertise, the team, and the technology.
+              {t.ctaText}
             </motion.p>
             <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/contact" className="btn-primary group">
-                Book a Free Consultation
+                {t.ctaPrimary2}
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </Link>
               <Link href="/about" className="btn-outline">
-                Learn About Us
+                {t.ctaSecondary2}
               </Link>
             </motion.div>
           </Section>

@@ -1,30 +1,14 @@
+"use client";
+
 import Link from "next/link";
 import { Mail, MapPin, Linkedin, ArrowUpRight } from "lucide-react";
-
-const services = [
-  "AI Solutions",
-  "Application Development",
-  "Process Automation",
-  "Enterprise Platforms",
-];
-
-const industries = [
-  "Banking & Finance",
-  "Telecom",
-  "Logistics",
-  "Government",
-  "Healthcare",
-  "Retail",
-];
-
-const company = [
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Industries", href: "/industries" },
-  { label: "Contact", href: "/contact" },
-];
+import { useLang } from "@/lib/LangContext";
+import { translations } from "@/lib/translations";
 
 export default function Footer() {
+  const { lang } = useLang();
+  const t = translations[lang].footer;
+
   return (
     <footer className="relative border-t border-slate-border/30 bg-dark-950">
       {/* Top glow */}
@@ -58,14 +42,10 @@ export default function Footer() {
                 </div>
               </div>
             </Link>
-            <p className="text-slate-text text-sm leading-relaxed mb-5">
-              AI-powered solutions and enterprise software built for African businesses ready to scale.
-            </p>
+            <p className="text-slate-text text-sm leading-relaxed mb-5">{t.tagline}</p>
             <div className="space-y-2.5">
-              <a
-                href="mailto:contact@novastack.africa"
-                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group"
-              >
+              <a href="mailto:contact@novastack.africa"
+                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group">
                 <Mail className="w-4 h-4 text-blue-primary group-hover:scale-110 transition-transform" />
                 contact@novastack.africa
               </a>
@@ -73,12 +53,9 @@ export default function Footer() {
                 <MapPin className="w-4 h-4 text-blue-primary flex-shrink-0" />
                 Abidjan, Côte d&apos;Ivoire
               </div>
-              <a
-                href="https://www.linkedin.com/company/novastack-africa"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group"
-              >
+              <a href="https://www.linkedin.com/company/novastack-africa"
+                target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group">
                 <Linkedin className="w-4 h-4 text-blue-primary group-hover:scale-110 transition-transform" />
                 LinkedIn
                 <ArrowUpRight className="w-3 h-3 opacity-50" />
@@ -88,14 +65,11 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Company</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">{t.company}</h4>
             <ul className="space-y-2.5">
-              {company.map((item) => (
+              {t.companyLinks.map((item) => (
                 <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-slate-text hover:text-white text-sm transition-colors"
-                  >
+                  <Link href={item.href} className="text-slate-text hover:text-white text-sm transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -105,14 +79,11 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Services</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">{t.services}</h4>
             <ul className="space-y-2.5">
-              {services.map((s) => (
+              {t.servicesList.map((s) => (
                 <li key={s}>
-                  <Link
-                    href="/services"
-                    className="text-slate-text hover:text-white text-sm transition-colors"
-                  >
+                  <Link href="/services" className="text-slate-text hover:text-white text-sm transition-colors">
                     {s}
                   </Link>
                 </li>
@@ -122,9 +93,9 @@ export default function Footer() {
 
           {/* Industries */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Industries</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">{t.industries}</h4>
             <ul className="space-y-2.5">
-              {industries.map((ind) => (
+              {t.industriesList.map((ind) => (
                 <li key={ind}>
                   <span className="text-slate-text text-sm">{ind}</span>
                 </li>
@@ -136,11 +107,9 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-slate-border/20 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-slate-muted text-xs">
-            © {new Date().getFullYear()} NovaStack Africa. All rights reserved.
+            © {new Date().getFullYear()} NovaStack Africa. {t.rights}
           </p>
-          <p className="text-slate-muted text-xs">
-            Built with precision in Abidjan 🇨🇮
-          </p>
+          <p className="text-slate-muted text-xs">{t.madeIn}</p>
         </div>
       </div>
     </footer>

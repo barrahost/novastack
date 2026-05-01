@@ -4,19 +4,23 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronRight } from "lucide-react";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/industries", label: "Industries" },
-  { href: "/contact", label: "Contact" },
-];
+import { useLang } from "@/lib/LangContext";
+import { translations } from "@/lib/translations";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { lang, toggle } = useLang();
+  const t = translations[lang].nav;
+
+  const navLinks = [
+    { href: "/", label: t.home },
+    { href: "/about", label: t.about },
+    { href: "/services", label: t.services },
+    { href: "/industries", label: t.industries },
+    { href: "/contact", label: t.contact },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -66,10 +70,20 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
+          {/* CTA + Lang toggle */}
           <div className="hidden md:flex items-center gap-3">
+            {/* Language toggle */}
+            <button
+              onClick={toggle}
+              className="flex items-center gap-1 px-3 py-1.5 border border-slate-border/50 text-slate-text hover:text-white hover:border-slate-border text-xs font-bold tracking-widest uppercase transition-all duration-200"
+              aria-label="Changer de langue / Switch language"
+            >
+              <span className={lang === "fr" ? "text-orange-primary" : ""}>FR</span>
+              <span className="text-slate-muted/50">/</span>
+              <span className={lang === "en" ? "text-orange-primary" : ""}>EN</span>
+            </button>
             <Link href="/contact" className="btn-primary group text-sm">
-              Book a Call
+              {t.cta}
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
@@ -96,9 +110,18 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2">
+            <div className="pt-2 flex flex-col gap-2">
+              {/* Mobile lang toggle */}
+              <button
+                onClick={toggle}
+                className="flex items-center gap-1 px-4 py-2.5 border border-slate-border/50 text-xs font-bold tracking-widest uppercase w-fit transition-all"
+              >
+                <span className={lang === "fr" ? "text-orange-primary" : "text-slate-text"}>FR</span>
+                <span className="text-slate-muted/50 mx-1">/</span>
+                <span className={lang === "en" ? "text-orange-primary" : "text-slate-text"}>EN</span>
+              </button>
               <Link href="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full justify-center text-sm">
-                Book a Consultation <ChevronRight className="w-4 h-4" />
+                {t.cta} <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
           </div>

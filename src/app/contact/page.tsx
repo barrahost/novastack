@@ -3,6 +3,8 @@
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Mail, MapPin, Linkedin, Send, ChevronRight, CheckCircle2 } from "lucide-react";
+import { useLang } from "@/lib/LangContext";
+import { translations } from "@/lib/translations";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -20,31 +22,23 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-const contactInfo = [
-  { icon: Mail, label: "Email", value: "contact@novastack.africa", href: "mailto:contact@novastack.africa" },
-  { icon: Linkedin, label: "LinkedIn", value: "NovaStack Africa", href: "https://linkedin.com/company/novastack-africa" },
-  { icon: MapPin, label: "Location", value: "Abidjan, Côte d'Ivoire", href: null },
-];
-
-const needs = [
-  "AI Solutions",
-  "Application Development",
-  "Process Automation",
-  "Enterprise Solutions",
-  "Digital Transformation",
-  "Other",
-];
-
 export default function ContactPage() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
   const [form, setForm] = useState({ name: "", email: "", company: "", need: "", message: "" });
-  const [honeypot, setHoneypot] = useState(""); // anti-spam
+  const [honeypot, setHoneypot] = useState("");
+  const { lang } = useLang();
+  const t = translations[lang].contact;
+
+  const contactInfo = [
+    { icon: Mail, label: t.labels.email, value: "contact@novastack.africa", href: "mailto:contact@novastack.africa" },
+    { icon: Linkedin, label: t.labels.linkedin, value: "NovaStack Africa", href: "https://linkedin.com/company/novastack-africa" },
+    { icon: MapPin, label: t.labels.location, value: "Abidjan, Côte d'Ivoire", href: null },
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (honeypot) return; // bot detected
+    if (honeypot) return;
     setStatus("sending");
-    // In production: POST to your form endpoint or API route
     await new Promise((r) => setTimeout(r, 1200));
     setStatus("sent");
   };
@@ -57,15 +51,15 @@ export default function ContactPage() {
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-blue-primary/6 rounded-full blur-[120px]" />
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="label-orange mb-4">
-            Contact Us
+            {t.badge}
           </motion.p>
           <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="text-5xl lg:text-6xl font-black text-white mb-5 leading-tight">
-            Let's start a conversation
+            {t.h1}
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-xl text-slate-text max-w-xl">
-            Tell us about your project. We'll respond within 24 hours with an initial assessment.
+            {t.subtitle}
           </motion.p>
         </div>
       </section>
@@ -76,11 +70,11 @@ export default function ContactPage() {
           <Section>
             <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
 
-              {/* Contact info sidebar */}
+              {/* Sidebar */}
               <motion.div variants={fadeUp} className="lg:col-span-1 space-y-6">
                 <div>
-                  <h2 className="text-xl font-black text-white mb-1">Get in touch</h2>
-                  <p className="text-slate-text text-sm">We're available Mon–Fri, 8AM–6PM WAT.</p>
+                  <h2 className="text-xl font-black text-white mb-1">{t.infoTitle}</h2>
+                  <p className="text-slate-text text-sm">{t.infoSubtitle}</p>
                 </div>
 
                 <div className="space-y-3">
@@ -107,16 +101,10 @@ export default function ContactPage() {
                   })}
                 </div>
 
-                {/* What to expect */}
                 <div className="card-dark p-5">
-                  <p className="label-orange mb-4">What to Expect</p>
+                  <p className="label-orange mb-4">{t.expectTitle}</p>
                   <ul className="space-y-3">
-                    {[
-                      "Response within 24h",
-                      "Free initial assessment",
-                      "No-commitment consultation",
-                      "Tailored proposal within 5 days",
-                    ].map((item) => (
+                    {t.expectItems.map((item) => (
                       <li key={item} className="flex items-center gap-3 text-sm text-slate-text">
                         <CheckCircle2 className="w-4 h-4 text-orange-primary flex-shrink-0" />
                         {item}
@@ -133,102 +121,66 @@ export default function ContactPage() {
                     <div className="icon-box-orange p-4 mb-5">
                       <CheckCircle2 className="w-8 h-8 text-orange-primary" />
                     </div>
-                    <h3 className="text-2xl font-black text-white mb-3">Message received!</h3>
-                    <p className="text-slate-text max-w-sm">
-                      Thank you for reaching out. A member of our team will be in touch within 24 hours.
-                    </p>
+                    <h3 className="text-2xl font-black text-white mb-3">{t.successTitle}</h3>
+                    <p className="text-slate-text max-w-sm">{t.successText}</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="card-dark p-8 space-y-5">
-                    {/* Honeypot anti-spam */}
-                    <input
-                      type="text"
-                      name="_honey"
-                      value={honeypot}
-                      onChange={(e) => setHoneypot(e.target.value)}
-                      style={{ display: "none" }}
-                      tabIndex={-1}
-                      aria-hidden="true"
-                    />
+                    <input type="text" name="_honey" value={honeypot} onChange={(e) => setHoneypot(e.target.value)}
+                      style={{ display: "none" }} tabIndex={-1} aria-hidden="true" />
 
                     <div className="grid sm:grid-cols-2 gap-5">
                       <div>
-                        <label className="label-blue block mb-2">Full Name *</label>
-                        <input
-                          type="text"
-                          required
-                          value={form.name}
-                          onChange={(e) => setForm({ ...form, name: e.target.value })}
+                        <label className="label-blue block mb-2">{t.formName}</label>
+                        <input type="text" required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
                           placeholder="Jean Dupont"
-                          className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors"
-                        />
+                          className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors" />
                       </div>
                       <div>
-                        <label className="label-blue block mb-2">Email *</label>
-                        <input
-                          type="email"
-                          required
-                          value={form.email}
-                          onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        <label className="label-blue block mb-2">{t.formEmail}</label>
+                        <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
                           placeholder="jean@entreprise.com"
-                          className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors"
-                        />
+                          className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors" />
                       </div>
                     </div>
 
                     <div>
-                      <label className="label-blue block mb-2">Company / Organization *</label>
-                      <input
-                        type="text"
-                        required
-                        value={form.company}
-                        onChange={(e) => setForm({ ...form, company: e.target.value })}
+                      <label className="label-blue block mb-2">{t.formCompany}</label>
+                      <input type="text" required value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })}
                         placeholder="Votre entreprise"
-                        className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors"
-                      />
+                        className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors" />
                     </div>
 
                     <div>
-                      <label className="label-blue block mb-2">What do you need?</label>
-                      <select
-                        value={form.need}
-                        onChange={(e) => setForm({ ...form, need: e.target.value })}
-                        className="w-full bg-dark-800 border border-slate-border/50 text-white px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors appearance-none cursor-pointer"
-                      >
-                        <option value="">Select a service area...</option>
-                        {needs.map((n) => (
+                      <label className="label-blue block mb-2">{t.formNeed}</label>
+                      <select value={form.need} onChange={(e) => setForm({ ...form, need: e.target.value })}
+                        className="w-full bg-dark-800 border border-slate-border/50 text-white px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors appearance-none cursor-pointer">
+                        <option value="">{t.formNeedPlaceholder}</option>
+                        {t.needs.map((n) => (
                           <option key={n} value={n}>{n}</option>
                         ))}
                       </select>
                     </div>
 
                     <div>
-                      <label className="label-blue block mb-2">Tell us about your project *</label>
-                      <textarea
-                        required
-                        rows={5}
-                        value={form.message}
-                        onChange={(e) => setForm({ ...form, message: e.target.value })}
-                        placeholder="Describe your challenge, current situation, and what outcome you're looking for..."
-                        className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors resize-none"
-                      />
+                      <label className="label-blue block mb-2">{t.formMessage}</label>
+                      <textarea required rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })}
+                        placeholder={t.formMessagePlaceholder}
+                        className="w-full bg-dark-800 border border-slate-border/50 text-white placeholder-slate-muted px-4 py-3 text-sm focus:outline-none focus:border-blue-primary transition-colors resize-none" />
                     </div>
 
                     <div className="flex items-center justify-between pt-2">
-                      <p className="text-xs text-slate-muted">* Required fields</p>
-                      <button
-                        type="submit"
-                        disabled={status === "sending"}
-                        className="btn-primary group disabled:opacity-60 disabled:cursor-not-allowed"
-                      >
+                      <p className="text-xs text-slate-muted">{t.formRequired}</p>
+                      <button type="submit" disabled={status === "sending"}
+                        className="btn-primary group disabled:opacity-60 disabled:cursor-not-allowed">
                         {status === "sending" ? (
                           <span className="flex items-center gap-2">
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white animate-spin" />
-                            Sending...
+                            {t.formSending}
                           </span>
                         ) : (
                           <span className="flex items-center gap-2">
-                            Send Message
+                            {t.formSend}
                             <Send className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                           </span>
                         )}

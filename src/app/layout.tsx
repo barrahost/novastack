@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { LangProvider } from "@/lib/LangContext";
 
 export const metadata: Metadata = {
   title: {
@@ -61,9 +62,11 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
       </head>
       <body className="bg-dark-900 text-white antialiased">
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <LangProvider>
+          <Navbar />
+          <main>{children}</main>
+          <Footer />
+        </LangProvider>
       </body>
     </html>
   );
