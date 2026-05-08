@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Mail, MapPin, Linkedin, Send, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Mail, MapPin, Linkedin, Send, ChevronRight, CircleCheck as CheckCircle2 } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -27,9 +27,7 @@ const contactInfo = [
 ];
 
 const needs = [
-  "AI Solutions",
   "Application Development",
-  "Process Automation",
   "Enterprise Solutions",
   "Digital Transformation",
   "Other",

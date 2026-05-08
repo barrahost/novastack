@@ -3,11 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import {
-  Bot, Zap, Code2, Building2, ArrowRight,
-  Sparkles, Shield, Globe, TrendingUp, CheckCircle2,
-  Brain, Workflow, BarChart3, Layers, Users, ChevronRight
-} from "lucide-react";
+import { Zap, Code as Code2, Building2, ArrowRight, Sparkles, Shield, Globe, TrendingUp, CircleCheck as CheckCircle2, Brain, Layers, ChevronRight } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -27,22 +23,10 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 
 const services = [
   {
-    icon: Brain, accent: "blue",
-    title: "AI Solutions",
-    desc: "AI agents, copilots, chatbots, and automated workflows tailored to your business.",
-    items: ["AI Agents & Copilots", "Intelligent Chatbots", "AI Workflow Automation"],
-  },
-  {
-    icon: Code2, accent: "orange",
+    icon: Code2, accent: "blue",
     title: "Application Development",
     desc: "Modern web applications, business platforms, client portals and powerful dashboards.",
     items: ["Web Applications", "Business Platforms", "Dashboards & BI"],
-  },
-  {
-    icon: Workflow, accent: "blue",
-    title: "Process Automation",
-    desc: "Digitize operations, automate workflows, connect your Microsoft 365 ecosystem.",
-    items: ["Workflow Digitization", "MS 365 Automation", "Reporting Systems"],
   },
   {
     icon: Building2, accent: "orange",

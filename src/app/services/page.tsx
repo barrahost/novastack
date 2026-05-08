@@ -3,11 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import {
-  Brain, Code2, Workflow, Building2, ChevronRight,
-  Bot, Cpu, MessageSquare, Zap, Globe, LayoutDashboard,
-  Users, FileBarChart, Settings, Monitor, TrendingUp, Database
-} from "lucide-react";
+import { Code as Code2, Building2, ChevronRight, Zap, Globe, LayoutDashboard, Users, Settings, Monitor, TrendingUp } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -27,25 +23,10 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
 
 const serviceCategories = [
   {
-    id: "ai",
-    icon: Brain,
-    accent: "blue",
-    label: "01",
-    title: "AI Solutions",
-    tagline: "Intelligence that works for you",
-    desc: "We design and deploy AI systems that automate decision-making, augment your team's capabilities, and unlock insights hidden in your data.",
-    services: [
-      { icon: Bot, name: "AI Agents", desc: "Autonomous agents that handle complex, multi-step business workflows without human intervention." },
-      { icon: Cpu, name: "AI Copilots", desc: "Intelligent assistants embedded in your existing tools to supercharge team productivity." },
-      { icon: MessageSquare, name: "Intelligent Chatbots", desc: "Conversational AI systems for customer support, internal helpdesks, and automated intake." },
-      { icon: Zap, name: "AI Workflow Automation", desc: "End-to-end automation pipelines that combine AI with your existing business processes." },
-    ],
-  },
-  {
     id: "dev",
     icon: Code2,
-    accent: "orange",
-    label: "02",
+    accent: "blue",
+    label: "01",
     title: "Application Development",
     tagline: "Software built to perform and scale",
     desc: "From internal business tools to customer-facing platforms, we build modern web applications that are fast, reliable, and beautiful.",
@@ -57,25 +38,10 @@ const serviceCategories = [
     ],
   },
   {
-    id: "automation",
-    icon: Workflow,
-    accent: "blue",
-    label: "03",
-    title: "Process Automation",
-    tagline: "Eliminate manual work at scale",
-    desc: "We identify bottlenecks in your operations and replace them with intelligent, automated workflows — saving time, reducing errors, and lowering costs.",
-    services: [
-      { icon: Settings, name: "Workflow Digitization", desc: "Transform manual, paper-based, or email-driven processes into streamlined digital workflows." },
-      { icon: Database, name: "System Integration", desc: "Connect your ERP, CRM, and other systems to eliminate data silos and automate hand-offs." },
-      { icon: Monitor, name: "MS 365 Automation", desc: "Power Automate, Power Apps, and custom connectors to maximize your Microsoft 365 investment." },
-      { icon: FileBarChart, name: "Reporting Systems", desc: "Automated reporting pipelines that generate and distribute insights on your schedule." },
-    ],
-  },
-  {
     id: "enterprise",
     icon: Building2,
     accent: "orange",
-    label: "04",
+    label: "02",
     title: "Enterprise Solutions",
     tagline: "Platforms built for complexity",
     desc: "Large organizations need software that handles scale, security, and complexity. We build enterprise-grade systems that your operations can depend on.",
@@ -106,7 +72,7 @@ export default function ServicesPage() {
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-xl text-slate-text leading-relaxed max-w-2xl mx-auto">
-            Four core service areas. One goal: accelerate your digital transformation with precision-built technology.
+            Two core service areas. One goal: accelerate your digital transformation with precision-built technology.
           </motion.p>
         </div>
       </section>

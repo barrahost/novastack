@@ -2,10 +2,8 @@ import Link from "next/link";
 import { Mail, MapPin, Linkedin, ArrowUpRight } from "lucide-react";
 
 const services = [
-  "AI Solutions",
   "Application Development",
-  "Process Automation",
-  "Enterprise Platforms",
+  "Enterprise Solutions",
 ];
 
 const industries = [
