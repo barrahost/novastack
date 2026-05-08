@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { Zap, Code as Code2, Building2, ArrowRight, Sparkles, Shield, Globe, TrendingUp, CircleCheck as CheckCircle2, Brain, Layers, ChevronRight } from "lucide-react";
+import { Zap, Code as Code2, ArrowRight, Sparkles, Shield, Globe, TrendingUp, CircleCheck as CheckCircle2, Brain, Layers, ChevronRight, LayoutDashboard, Users, Building2 } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 28 },
@@ -21,19 +21,11 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-const services = [
-  {
-    icon: Code2, accent: "blue",
-    title: "Application Development",
-    desc: "Modern web applications, business platforms, client portals and powerful dashboards.",
-    items: ["Web Applications", "Business Platforms", "Dashboards & BI"],
-  },
-  {
-    icon: Building2, accent: "orange",
-    title: "Enterprise Solutions",
-    desc: "Internal tools, operations platforms, monitoring systems for large organizations.",
-    items: ["Internal Tools", "Operations Platforms", "Digital Transformation"],
-  },
+const subServices = [
+  { icon: Globe, title: "Web Applications", desc: "Full-stack apps — performant, secure, production-ready." },
+  { icon: Building2, title: "Business Platforms", desc: "Core operational platforms that centralize your processes." },
+  { icon: Users, title: "Client Portals", desc: "Secure, branded portals for real-time client access." },
+  { icon: LayoutDashboard, title: "Dashboards & BI", desc: "Interactive analytics that turn data into decisions." },
 ];
 
 const stats = [
@@ -85,8 +77,8 @@ export default function HomePage() {
 
             <motion.p initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.2 }}
               className="text-lg sm:text-xl text-slate-text max-w-2xl mb-10 leading-relaxed">
-              NovaStack Africa delivers enterprise AI, automation, and custom software solutions
-              that accelerate your digital transformation across Africa.
+              NovaStack Africa builds modern, AI-powered software for African enterprises —
+              web applications, business platforms, and analytics dashboards built to perform.
             </motion.p>
 
             {/* CTAs */}
@@ -120,46 +112,41 @@ export default function HomePage() {
       <section className="relative py-24 lg:py-32 border-t border-slate-border/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
-            <motion.div variants={fadeUp} className="mb-14">
-              <p className="label-orange mb-3">What We Build</p>
-              <h2 className="text-4xl lg:text-5xl font-black text-white max-w-xl leading-tight">
-                End-to-end digital solutions
-              </h2>
-              <p className="text-slate-text mt-3 max-w-xl">
-                From AI agents to enterprise platforms — the full spectrum of modern software.
-              </p>
-            </motion.div>
+            <div className="grid lg:grid-cols-2 gap-16 items-start">
+              <motion.div variants={fadeUp}>
+                <p className="label-orange mb-3">What We Build</p>
+                <h2 className="text-4xl lg:text-5xl font-black text-white leading-tight mb-5">
+                  Application Development
+                </h2>
+                <p className="text-slate-text leading-relaxed mb-6">
+                  From internal tools to customer-facing platforms, we build modern web applications
+                  that are fast, reliable, and designed to scale with your business.
+                </p>
+                <p className="text-slate-text leading-relaxed mb-8">
+                  Every project starts with a deep understanding of your business processes — then
+                  we architect and build software that fits precisely, with no unnecessary complexity.
+                </p>
+                <Link href="/services" className="inline-flex items-center gap-2 text-orange-primary hover:text-orange-light text-sm font-semibold uppercase tracking-wider transition-colors group">
+                  See what we build
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </motion.div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-slate-border/20">
-              {services.map((s) => {
-                const Icon = s.icon;
-                return (
-                  <motion.div key={s.title} variants={fadeUp}
-                    className="card-dark p-8 group transition-all duration-300">
-                    <div className={s.accent === "blue" ? "icon-box-blue mb-5" : "icon-box-orange mb-5"}>
-                      <Icon className={`w-5 h-5 ${s.accent === "blue" ? "text-white" : "text-orange-primary"}`} />
-                    </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
-                    <p className="text-slate-text text-sm leading-relaxed mb-5">{s.desc}</p>
-                    <ul className="space-y-2">
-                      {s.items.map((item) => (
-                        <li key={item} className="flex items-center gap-2.5 text-sm text-slate-text">
-                          <div className={`w-1 h-1 flex-shrink-0 ${s.accent === "blue" ? "bg-blue-primary" : "bg-orange-primary"}`} />
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </motion.div>
-                );
-              })}
+              <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {subServices.map((s, idx) => {
+                  const Icon = s.icon;
+                  return (
+                    <motion.div key={s.title} variants={fadeUp} className="card-dark p-6 group transition-all duration-300">
+                      <div className={`mb-4 ${idx % 2 === 0 ? "icon-box-blue" : "icon-box-orange"}`}>
+                        <Icon className={`w-4 h-4 ${idx % 2 === 0 ? "text-white" : "text-orange-primary"}`} />
+                      </div>
+                      <h3 className="text-white font-bold mb-2 text-sm">{s.title}</h3>
+                      <p className="text-slate-text text-xs leading-relaxed">{s.desc}</p>
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
             </div>
-
-            <motion.div variants={fadeUp} className="mt-8">
-              <Link href="/services" className="inline-flex items-center gap-2 text-orange-primary hover:text-orange-light text-sm font-semibold uppercase tracking-wider transition-colors group">
-                Explore all services
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </Link>
-            </motion.div>
           </Section>
         </div>
       </section>
@@ -195,7 +182,7 @@ export default function HomePage() {
                   ))}
                 </ul>
                 <Link href="/services" className="btn-outline w-fit">
-                  Explore AI Solutions <ArrowRight className="w-4 h-4" />
+                  Explore our work <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
 

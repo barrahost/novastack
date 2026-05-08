@@ -27,9 +27,10 @@ const contactInfo = [
 ];
 
 const needs = [
-  "Application Development",
-  "Enterprise Solutions",
-  "Digital Transformation",
+  "Web Application",
+  "Business Platform",
+  "Client Portal",
+  "Dashboard & BI",
   "Other",
 ];
 

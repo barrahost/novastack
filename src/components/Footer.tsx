@@ -3,13 +3,13 @@ import { Mail, MapPin, Linkedin, ArrowUpRight } from "lucide-react";
 
 const services = [
   "Application Development",
-  "Enterprise Solutions",
 ];
 
 const industries = [
   "Banking & Finance",
   "Telecom",
   "Logistics",
+  "Datacenter & ICT",
   "Government",
   "Healthcare",
   "Retail",

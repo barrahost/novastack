@@ -31,11 +31,11 @@ const values = [
 ];
 
 const expertise = [
-  { label: "AI & Machine Learning", pct: 95 },
-  { label: "Enterprise Software Development", pct: 92 },
-  { label: "Process Automation", pct: 90 },
+  { label: "Web & Platform Development", pct: 97 },
+  { label: "AI & Machine Learning Integration", pct: 92 },
+  { label: "Data Engineering & BI", pct: 88 },
   { label: "Cloud & DevOps", pct: 85 },
-  { label: "Data Engineering", pct: 80 },
+  { label: "UX & Product Design", pct: 82 },
 ];
 
 export default function AboutPage() {
@@ -93,7 +93,7 @@ export default function AboutPage() {
                   title: "Our Mission",
                   color: "orange",
                   content:
-                    "To accelerate the digital transformation of African enterprises through AI-powered solutions, modern software development, and process automation — built with precision, delivered with impact.",
+                    "To accelerate the digital transformation of African enterprises through AI-powered application development — building modern, scalable software that fits your business with precision and delivers real impact.",
                 },
               ].map((card) => {
                 const Icon = card.icon;
