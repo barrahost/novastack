@@ -17,7 +17,6 @@ export default function Navbar() {
     { href: `/${locale}`, label: t("home") },
     { href: `/${locale}/about`, label: t("about") },
     { href: `/${locale}/services`, label: t("services") },
-    { href: `/${locale}/industries`, label: t("industries") },
     { href: `/${locale}/contact`, label: t("contact") },
   ];
 

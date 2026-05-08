@@ -9,24 +9,9 @@ export default function Footer() {
   const tNav = useTranslations("nav");
   const locale = useLocale();
 
-  const services = [
-    { label: "Application Development", href: `/${locale}/services` },
-  ];
-
-  const industries = [
-    "Banking & Finance",
-    "Telecom",
-    "Logistics",
-    "Datacenter & ICT",
-    "Government",
-    "Healthcare",
-    "Retail",
-  ];
-
   const company = [
     { label: tNav("about"), href: `/${locale}/about` },
     { label: tNav("services"), href: `/${locale}/services` },
-    { label: tNav("industries"), href: `/${locale}/industries` },
     { label: tNav("contact"), href: `/${locale}/contact` },
   ];
 
@@ -35,7 +20,7 @@ export default function Footer() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-px bg-gradient-to-r from-transparent via-blue-primary/50 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-12">
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href={`/${locale}`} className="flex items-center gap-3 mb-4">
@@ -102,25 +87,11 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold text-sm mb-4">{t("services")}</h4>
             <ul className="space-y-2.5">
-              {services.map((s) => (
-                <li key={s.label}>
-                  <Link href={s.href} className="text-slate-text hover:text-white text-sm transition-colors">
-                    {s.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Industries */}
-          <div>
-            <h4 className="text-white font-semibold text-sm mb-4">{t("industries")}</h4>
-            <ul className="space-y-2.5">
-              {industries.map((ind) => (
-                <li key={ind}>
-                  <span className="text-slate-text text-sm">{ind}</span>
-                </li>
-              ))}
+              <li>
+                <Link href={`/${locale}/services`} className="text-slate-text hover:text-white text-sm transition-colors">
+                  Application Development
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
