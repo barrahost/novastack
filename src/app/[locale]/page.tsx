@@ -22,13 +22,6 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-const stats = [
-  { value: "50+", labelKey: "stat1Label" },
-  { value: "15+", labelKey: "stat2Label" },
-  { value: "5", labelKey: "stat3Label" },
-  { value: "100%", labelKey: "stat4Label" },
-];
-
 const subServiceIcons = [Globe, Building2, Users, LayoutDashboard];
 const reasonIcons = [Sparkles, TrendingUp, Zap, Shield, Globe, Layers];
 const industries = ["Banking & Finance", "Telecom", "Logistics", "Datacenter", "Retail", "Government", "Healthcare"];
@@ -97,14 +90,11 @@ export default function HomePage() {
             </motion.div>
           </div>
 
+          {/* Honest intro paragraph — replaces fabricated stats */}
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.55 }}
-            className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-px bg-slate-border/30 border border-slate-border/30 w-fit">
-            {stats.map((s) => (
-              <div key={s.labelKey} className="bg-dark-800 px-8 py-5 text-center">
-                <div className="text-3xl font-black text-gradient-blue mb-1">{s.value}</div>
-                <div className="text-xs text-slate-text uppercase tracking-wider font-medium">{t(s.labelKey as any)}</div>
-              </div>
-            ))}
+            className="mt-20 max-w-2xl border-l-2 border-orange-primary/40 pl-6">
+            <p className="text-xs text-orange-primary uppercase tracking-widest font-semibold mb-3">{t("introLabel")}</p>
+            <p className="text-slate-text leading-relaxed">{t("introText")}</p>
           </motion.div>
         </div>
       </section>

@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
-import { Target, Eye, Heart, Zap, Globe, TrendingUp, ArrowRight, ChevronRight, Users, Cpu } from "lucide-react";
+import { Target, Eye, Heart, Zap, Globe, TrendingUp, ArrowRight, ChevronRight, Users, Cpu, Code as Code2, BarChart2, Cloud, Layers } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -22,19 +22,19 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-const expertisePcts = [97, 92, 88, 85, 82];
+const skillIcons = [Code2, Cpu, BarChart2, Cloud, Layers];
 const valueIcons = [Target, Zap, Heart, Globe, TrendingUp, Users];
 
 export default function AboutPage() {
   const t = useTranslations("about");
   const locale = useLocale();
 
-  const expertise = [
-    { label: t("exp1"), pct: expertisePcts[0] },
-    { label: t("exp2"), pct: expertisePcts[1] },
-    { label: t("exp3"), pct: expertisePcts[2] },
-    { label: t("exp4"), pct: expertisePcts[3] },
-    { label: t("exp5"), pct: expertisePcts[4] },
+  const skills = [
+    { icon: skillIcons[0], label: t("exp1") },
+    { icon: skillIcons[1], label: t("exp2") },
+    { icon: skillIcons[2], label: t("exp3") },
+    { icon: skillIcons[3], label: t("exp4") },
+    { icon: skillIcons[4], label: t("exp5") },
   ];
 
   const values = [
@@ -71,6 +71,19 @@ export default function AboutPage() {
         </div>
       </section>
 
+      {/* Where we are today */}
+      <section className="py-12 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Section>
+            <motion.div variants={fadeUp}
+              className="border-l-2 border-orange-primary/40 pl-6 max-w-2xl mx-auto lg:mx-0">
+              <p className="text-xs text-orange-primary uppercase tracking-widest font-semibold mb-3">{t("todayLabel")}</p>
+              <p className="text-slate-text leading-relaxed">{t("todayContent")}</p>
+            </motion.div>
+          </Section>
+        </div>
+      </section>
+
       {/* Vision & Mission */}
       <section className="py-16 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -101,7 +114,7 @@ export default function AboutPage() {
         <div className="absolute inset-0 bg-dark-800/30" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
               <motion.div variants={fadeUp}>
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-orange-primary/30 bg-orange-primary/8 text-orange-primary text-xs font-medium mb-5">
                   {t("approachBadge")}
@@ -122,25 +135,21 @@ export default function AboutPage() {
                 </div>
               </motion.div>
 
-              <motion.div variants={fadeUp} className="space-y-5">
+              <motion.div variants={fadeUp}>
                 <h3 className="text-lg font-semibold text-white mb-6">{t("expertiseTitle")}</h3>
-                {expertise.map((e) => (
-                  <div key={e.label}>
-                    <div className="flex justify-between text-sm mb-1.5">
-                      <span className="text-slate-text">{e.label}</span>
-                      <span className="text-blue-light font-medium">{e.pct}%</span>
-                    </div>
-                    <div className="h-1.5 bg-dark-500 rounded-full overflow-hidden">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        whileInView={{ width: `${e.pct}%` }}
-                        transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-                        viewport={{ once: true }}
-                        className="h-full bg-gradient-to-r from-blue-primary to-blue-light rounded-full"
-                      />
-                    </div>
-                  </div>
-                ))}
+                <div className="space-y-3">
+                  {skills.map((s) => {
+                    const Icon = s.icon;
+                    return (
+                      <div key={s.label} className="flex items-center gap-3 py-3 px-4 border border-slate-border/30 bg-dark-800/40 hover:border-blue-primary/30 transition-colors">
+                        <div className="p-1.5 bg-blue-primary/10 border border-blue-primary/20 flex-shrink-0">
+                          <Icon className="w-4 h-4 text-blue-light" />
+                        </div>
+                        <span className="text-slate-text text-sm">{s.label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </motion.div>
             </div>
           </Section>
