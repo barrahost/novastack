@@ -3,7 +3,8 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { Code as Code2, ChevronRight, Zap, Globe, LayoutDashboard, Users, Monitor, CircleCheck as CheckCircle2, ArrowRight, Building2 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
+import { Code as Code2, ChevronRight, Globe, LayoutDashboard, Users, CircleCheck as CheckCircle2, ArrowRight, Building2 } from "lucide-react";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -21,42 +22,47 @@ function Section({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-const subServices = [
-  {
-    icon: Globe,
-    title: "Web Applications",
-    desc: "Full-stack applications built with modern frameworks — performant, secure, and production-ready. From internal tools to customer-facing portals, we engineer software that scales with your ambitions.",
-    features: ["Next.js, React, TypeScript", "REST & GraphQL APIs", "Mobile-responsive design", "CI/CD & cloud deployment"],
-  },
-  {
-    icon: Building2,
-    title: "Business Platforms",
-    desc: "Core operational platforms that digitize and centralize your most critical business processes. We architect systems that serve as the backbone of your digital operations.",
-    features: ["ERP-style platforms", "Multi-user role management", "Workflow automation built-in", "Real-time data synchronization"],
-  },
-  {
-    icon: Users,
-    title: "Client Portals",
-    desc: "Branded, secure portals that give your clients real-time access to their data and services. Strengthen relationships while reducing your support overhead.",
-    features: ["Secure authentication", "Custom branding & white-label", "Document & file management", "Notification & messaging systems"],
-  },
-  {
-    icon: LayoutDashboard,
-    title: "Dashboards & BI",
-    desc: "Interactive analytics dashboards that turn your raw data into actionable business intelligence. Make faster, better decisions with data visualizations built for your exact KPIs.",
-    features: ["Real-time data visualization", "Custom KPI tracking", "Multi-source data integration", "Exportable reports & alerts"],
-  },
-];
-
-const process = [
-  { step: "01", title: "Discovery", desc: "We immerse ourselves in your business — processes, constraints, and goals — before writing a single line of code." },
-  { step: "02", title: "Architecture", desc: "We design a technical blueprint that matches your needs today and scales with your growth tomorrow." },
-  { step: "03", title: "Build", desc: "Agile sprints with weekly demos. You see progress continuously, not at the end." },
-  { step: "04", title: "Deploy", desc: "Production launch with thorough testing, performance validation, and team onboarding." },
-  { step: "05", title: "Optimize", desc: "Post-launch support, iteration cycles, and continuous improvements based on real usage data." },
-];
-
 export default function ServicesPage() {
+  const t = useTranslations("services");
+  const locale = useLocale();
+
+  const subServices = [
+    {
+      icon: Globe,
+      title: t("sub1Title"),
+      desc: t("sub1Desc"),
+      features: [t("sub1f1"), t("sub1f2"), t("sub1f3"), t("sub1f4")],
+    },
+    {
+      icon: Building2,
+      title: t("sub2Title"),
+      desc: t("sub2Desc"),
+      features: [t("sub2f1"), t("sub2f2"), t("sub2f3"), t("sub2f4")],
+    },
+    {
+      icon: Users,
+      title: t("sub3Title"),
+      desc: t("sub3Desc"),
+      features: [t("sub3f1"), t("sub3f2"), t("sub3f3"), t("sub3f4")],
+    },
+    {
+      icon: LayoutDashboard,
+      title: t("sub4Title"),
+      desc: t("sub4Desc"),
+      features: [t("sub4f1"), t("sub4f2"), t("sub4f3"), t("sub4f4")],
+    },
+  ];
+
+  const process = [
+    { step: "01", title: t("step1"), desc: t("step1Desc") },
+    { step: "02", title: t("step2"), desc: t("step2Desc") },
+    { step: "03", title: t("step3"), desc: t("step3Desc") },
+    { step: "04", title: t("step4"), desc: t("step4Desc") },
+    { step: "05", title: t("step5"), desc: t("step5Desc") },
+  ];
+
+  const features = [t("feat1"), t("feat2"), t("feat3"), t("feat4"), t("feat5")];
+
   return (
     <div className="relative overflow-hidden pt-20">
       {/* Hero */}
@@ -66,36 +72,35 @@ export default function ServicesPage() {
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-blue-primary/30 bg-blue-primary/8 text-blue-light text-xs font-medium mb-6">
-            <Code2 className="w-3.5 h-3.5" /> What We Build
+            <Code2 className="w-3.5 h-3.5" /> {t("badge")}
           </motion.div>
           <motion.h1 initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
             className="text-5xl lg:text-6xl font-black text-white mb-6 leading-tight">
-            Application Development <br />
-            <span className="text-gradient-blue">built for impact</span>
+            {t("title")} <br />
+            <span className="text-gradient-blue">{t("titleHighlight")}</span>
           </motion.h1>
           <motion.p initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
             className="text-xl text-slate-text leading-relaxed max-w-2xl mx-auto mb-10">
-            From internal business tools to customer-facing platforms, we design and build modern software
-            that is fast, reliable, and built to grow with your organization.
+            {t("desc")}
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/contact" className="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-primary hover:bg-blue-light text-white font-semibold rounded-xl transition-all shadow-glow-blue text-sm">
-              Get a Quote <ChevronRight className="w-4 h-4" />
+            <Link href={`/${locale}/contact`} className="inline-flex items-center gap-2 px-7 py-3.5 bg-blue-primary hover:bg-blue-light text-white font-semibold rounded-xl transition-all shadow-glow-blue text-sm">
+              {t("ctaPrimary")} <ChevronRight className="w-4 h-4" />
             </Link>
-            <Link href="/about" className="inline-flex items-center gap-2 px-7 py-3.5 border border-slate-border hover:border-blue-primary/40 text-slate-text hover:text-white rounded-xl transition-all text-sm font-semibold">
-              How We Work <ArrowRight className="w-4 h-4" />
+            <Link href={`/${locale}/about`} className="inline-flex items-center gap-2 px-7 py-3.5 border border-slate-border hover:border-blue-primary/40 text-slate-text hover:text-white rounded-xl transition-all text-sm font-semibold">
+              {t("ctaSecondary")} <ArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
         </div>
       </section>
 
-      {/* What's included intro */}
+      {/* Features bar */}
       <section className="py-8 relative border-t border-slate-border/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
             <motion.div variants={fadeUp} className="flex flex-wrap gap-6 justify-center">
-              {["Bespoke software, not off-the-shelf", "Modern tech stack", "Agile delivery", "Post-launch support", "African enterprise expertise"].map((item) => (
+              {features.map((item) => (
                 <div key={item} className="flex items-center gap-2 text-sm text-slate-text">
                   <CheckCircle2 className="w-4 h-4 text-blue-primary flex-shrink-0" />
                   {item}
@@ -111,9 +116,9 @@ export default function ServicesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
             <motion.div variants={fadeUp} className="text-center mb-16">
-              <p className="label-orange mb-3">What We Deliver</p>
-              <h2 className="text-4xl font-black text-white mb-4">Four types of software we build</h2>
-              <p className="text-slate-text max-w-xl mx-auto">Each engagement is scoped and architected to match your exact use case — no templates, no shortcuts.</p>
+              <p className="label-orange mb-3">{t("deliverLabel")}</p>
+              <h2 className="text-4xl font-black text-white mb-4">{t("deliverTitle")}</h2>
+              <p className="text-slate-text max-w-xl mx-auto">{t("deliverDesc")}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -149,9 +154,9 @@ export default function ServicesPage() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Section>
             <motion.div variants={fadeUp} className="text-center mb-16">
-              <p className="label-blue mb-3">Our Process</p>
-              <h2 className="text-4xl font-black text-white mb-4">How we deliver</h2>
-              <p className="text-slate-text max-w-lg mx-auto">A structured approach that ensures clarity, quality, and zero surprises from kickoff to launch.</p>
+              <p className="label-blue mb-3">{t("processLabel")}</p>
+              <h2 className="text-4xl font-black text-white mb-4">{t("processTitle")}</h2>
+              <p className="text-slate-text max-w-lg mx-auto">{t("processDesc")}</p>
             </motion.div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -178,15 +183,13 @@ export default function ServicesPage() {
           <Section>
             <motion.div variants={fadeUp} className="flex flex-col lg:flex-row items-center justify-between gap-8 card-dark p-10">
               <div className="max-w-xl">
-                <p className="label-orange mb-3">Industry Expertise</p>
-                <h3 className="text-2xl font-bold text-white mb-3">Software built for your sector</h3>
-                <p className="text-slate-text leading-relaxed">
-                  We've delivered solutions across Banking, Telecom, Logistics, Government, Healthcare, Retail, and Datacenter — with deep understanding of each sector's constraints and compliance requirements.
-                </p>
+                <p className="label-orange mb-3">{t("industryLabel")}</p>
+                <h3 className="text-2xl font-bold text-white mb-3">{t("industryTitle")}</h3>
+                <p className="text-slate-text leading-relaxed">{t("industryDesc")}</p>
               </div>
               <div className="flex-shrink-0">
-                <Link href="/industries" className="inline-flex items-center gap-2 px-7 py-3.5 border border-orange-primary/40 hover:bg-orange-primary/10 text-orange-primary font-semibold rounded-xl transition-all text-sm">
-                  View Industries <ArrowRight className="w-4 h-4" />
+                <Link href={`/${locale}/industries`} className="inline-flex items-center gap-2 px-7 py-3.5 border border-orange-primary/40 hover:bg-orange-primary/10 text-orange-primary font-semibold rounded-xl transition-all text-sm">
+                  {t("industryCta")} <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
             </motion.div>
@@ -199,16 +202,12 @@ export default function ServicesPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-blue-primary/5 via-transparent to-orange-primary/5" />
         <div className="relative max-w-2xl mx-auto text-center px-4">
           <Section>
-            <motion.h2 variants={fadeUp} className="text-3xl font-bold text-white mb-4">
-              Ready to start building?
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-slate-text mb-8">
-              Book a free 30-minute consultation. We'll assess your needs and scope a solution.
-            </motion.p>
+            <motion.h2 variants={fadeUp} className="text-3xl font-bold text-white mb-4">{t("ctaTitle")}</motion.h2>
+            <motion.p variants={fadeUp} className="text-slate-text mb-8">{t("ctaDesc")}</motion.p>
             <motion.div variants={fadeUp}>
-              <Link href="/contact"
+              <Link href={`/${locale}/contact`}
                 className="inline-flex items-center gap-2 px-8 py-4 bg-blue-primary hover:bg-blue-light text-white font-semibold rounded-xl transition-all shadow-glow-blue">
-                Book a Free Consultation <ChevronRight className="w-4 h-4" />
+                {t("ctaBtn")} <ChevronRight className="w-4 h-4" />
               </Link>
             </motion.div>
           </Section>

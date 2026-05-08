@@ -1,38 +1,44 @@
+"use client";
+
 import Link from "next/link";
 import { Mail, MapPin, Linkedin, ArrowUpRight } from "lucide-react";
-
-const services = [
-  "Application Development",
-];
-
-const industries = [
-  "Banking & Finance",
-  "Telecom",
-  "Logistics",
-  "Datacenter & ICT",
-  "Government",
-  "Healthcare",
-  "Retail",
-];
-
-const company = [
-  { label: "About", href: "/about" },
-  { label: "Services", href: "/services" },
-  { label: "Industries", href: "/industries" },
-  { label: "Contact", href: "/contact" },
-];
+import { useTranslations, useLocale } from "next-intl";
 
 export default function Footer() {
+  const t = useTranslations("footer");
+  const tNav = useTranslations("nav");
+  const locale = useLocale();
+
+  const services = [
+    { label: "Application Development", href: `/${locale}/services` },
+  ];
+
+  const industries = [
+    "Banking & Finance",
+    "Telecom",
+    "Logistics",
+    "Datacenter & ICT",
+    "Government",
+    "Healthcare",
+    "Retail",
+  ];
+
+  const company = [
+    { label: tNav("about"), href: `/${locale}/about` },
+    { label: tNav("services"), href: `/${locale}/services` },
+    { label: tNav("industries"), href: `/${locale}/industries` },
+    { label: tNav("contact"), href: `/${locale}/contact` },
+  ];
+
   return (
     <footer className="relative border-t border-slate-border/30 bg-dark-950">
-      {/* Top glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-px bg-gradient-to-r from-transparent via-blue-primary/50 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 mb-4">
+            <Link href={`/${locale}`} className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9">
                 <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect width="40" height="40" rx="8" fill="url(#footerLogoGrad)" />
@@ -57,13 +63,11 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-slate-text text-sm leading-relaxed mb-5">
-              AI-powered solutions and enterprise software built for African businesses ready to scale.
+              {t("tagline")}
             </p>
             <div className="space-y-2.5">
-              <a
-                href="mailto:contact@novastack.africa"
-                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group"
-              >
+              <a href="mailto:contact@novastack.africa"
+                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group">
                 <Mail className="w-4 h-4 text-blue-primary group-hover:scale-110 transition-transform" />
                 contact@novastack.africa
               </a>
@@ -71,12 +75,8 @@ export default function Footer() {
                 <MapPin className="w-4 h-4 text-blue-primary flex-shrink-0" />
                 Abidjan, Côte d&apos;Ivoire
               </div>
-              <a
-                href="https://www.linkedin.com/company/novastack-africa"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group"
-              >
+              <a href="https://www.linkedin.com/company/novastack-africa" target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2.5 text-sm text-slate-text hover:text-white transition-colors group">
                 <Linkedin className="w-4 h-4 text-blue-primary group-hover:scale-110 transition-transform" />
                 LinkedIn
                 <ArrowUpRight className="w-3 h-3 opacity-50" />
@@ -86,14 +86,11 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Company</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">{t("company")}</h4>
             <ul className="space-y-2.5">
               {company.map((item) => (
                 <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="text-slate-text hover:text-white text-sm transition-colors"
-                  >
+                  <Link href={item.href} className="text-slate-text hover:text-white text-sm transition-colors">
                     {item.label}
                   </Link>
                 </li>
@@ -103,15 +100,12 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Services</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">{t("services")}</h4>
             <ul className="space-y-2.5">
               {services.map((s) => (
-                <li key={s}>
-                  <Link
-                    href="/services"
-                    className="text-slate-text hover:text-white text-sm transition-colors"
-                  >
-                    {s}
+                <li key={s.label}>
+                  <Link href={s.href} className="text-slate-text hover:text-white text-sm transition-colors">
+                    {s.label}
                   </Link>
                 </li>
               ))}
@@ -120,7 +114,7 @@ export default function Footer() {
 
           {/* Industries */}
           <div>
-            <h4 className="text-white font-semibold text-sm mb-4">Industries</h4>
+            <h4 className="text-white font-semibold text-sm mb-4">{t("industries")}</h4>
             <ul className="space-y-2.5">
               {industries.map((ind) => (
                 <li key={ind}>
@@ -134,10 +128,10 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="border-t border-slate-border/20 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-slate-muted text-xs">
-            © {new Date().getFullYear()} NovaStack Africa. All rights reserved.
+            © {new Date().getFullYear()} NovaStack Africa. {t("rights")}
           </p>
           <p className="text-slate-muted text-xs">
-            Built with precision in Abidjan 🇨🇮
+            {t("builtIn")} 🇨🇮
           </p>
         </div>
       </div>

@@ -4,19 +4,25 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, ChevronRight } from "lucide-react";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/industries", label: "Industries" },
-  { href: "/contact", label: "Contact" },
-];
+import { useTranslations, useLocale } from "next-intl";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations("nav");
+  const locale = useLocale();
+
+  const navLinks = [
+    { href: `/${locale}`, label: t("home") },
+    { href: `/${locale}/about`, label: t("about") },
+    { href: `/${locale}/services`, label: t("services") },
+    { href: `/${locale}/industries`, label: t("industries") },
+    { href: `/${locale}/contact`, label: t("contact") },
+  ];
+
+  const otherLocale = locale === "fr" ? "en" : "fr";
+  const localizedPath = pathname.replace(`/${locale}`, `/${otherLocale}`) || `/${otherLocale}`;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -34,7 +40,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 lg:h-20">
 
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href={`/${locale}`} className="flex items-center gap-3 group">
             <div className="w-9 h-9 bg-blue-secondary flex items-center justify-center flex-shrink-0">
               <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-5 h-5">
                 <path d="M3 21V7L10 16.5L14 11L18 16.5L25 7V21H21.5V15L18 20L14 15L10 20L6.5 15V21H3Z" fill="white" />
@@ -57,7 +63,7 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}
                 className={`px-4 py-2 text-sm font-medium tracking-wide transition-all duration-200 ${
-                  pathname === link.href
+                  pathname === link.href || (link.href === `/${locale}` && pathname === `/${locale}/`)
                     ? "text-orange-primary border-b-2 border-orange-primary"
                     : "text-slate-text hover:text-white"
                 }`}>
@@ -66,10 +72,16 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* CTA */}
+          {/* CTA + Lang switcher */}
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/contact" className="btn-primary group text-sm">
-              Book a Call
+            <Link
+              href={localizedPath}
+              className="px-3 py-1.5 text-xs font-bold uppercase tracking-widest border border-slate-border/50 text-slate-text hover:border-blue-primary/50 hover:text-white transition-all"
+            >
+              {otherLocale}
+            </Link>
+            <Link href={`/${locale}/contact`} className="btn-primary group text-sm">
+              {t("bookCall")}
               <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
             </Link>
           </div>
@@ -96,9 +108,13 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <div className="pt-2">
-              <Link href="/contact" onClick={() => setIsOpen(false)} className="btn-primary w-full justify-center text-sm">
-                Book a Consultation <ChevronRight className="w-4 h-4" />
+            <div className="pt-2 flex gap-2">
+              <Link href={localizedPath} onClick={() => setIsOpen(false)}
+                className="px-4 py-2 text-xs font-bold uppercase tracking-widest border border-slate-border/50 text-slate-text hover:text-white transition-all">
+                {otherLocale}
+              </Link>
+              <Link href={`/${locale}/contact`} onClick={() => setIsOpen(false)} className="btn-primary flex-1 justify-center text-sm">
+                {t("bookCall")} <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
