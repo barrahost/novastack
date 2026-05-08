@@ -212,7 +212,8 @@
     "required": "* Required fields",
     "sending": "Sending...",
     "send": "Send Message",
-    "companyPlaceholder": "Your company"
+    "companyPlaceholder": "Your company",
+    "errorMsg": "An error occurred while sending. Please try again or contact us directly by email."
   },
   "industries": {
     "label": "Industries",

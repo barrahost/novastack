@@ -212,7 +212,8 @@
     "required": "* Champs obligatoires",
     "sending": "Envoi en cours...",
     "send": "Envoyer le message",
-    "companyPlaceholder": "Votre entreprise"
+    "companyPlaceholder": "Votre entreprise",
+    "errorMsg": "Une erreur est survenue lors de l'envoi. Veuillez réessayer ou nous contacter directement par email."
   },
   "industries": {
     "label": "Secteurs",
