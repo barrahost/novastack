@@ -51,10 +51,13 @@ export default function HomePage() {
 
       {/* HERO */}
       <section className="relative min-h-screen flex items-center pt-20">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#03070F] via-dark-900 to-dark-900" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-primary/6 rounded-full blur-[140px]" />
-        <div className="absolute top-20 right-1/3 w-48 h-48 bg-orange-primary/5 rounded-full blur-[80px]" />
-        <div className="absolute inset-0 opacity-[0.025]"
+        {/* Background image */}
+        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/abidjan.webp')" }} />
+        {/* Dark overlay to keep text readable */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#03070F]/85 via-dark-900/90 to-dark-900" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-primary/10 rounded-full blur-[140px]" />
+        <div className="absolute top-20 right-1/3 w-48 h-48 bg-orange-primary/8 rounded-full blur-[80px]" />
+        <div className="absolute inset-0 opacity-[0.02]"
           style={{ backgroundImage: `linear-gradient(rgba(26,107,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(26,107,255,1) 1px, transparent 1px)`, backgroundSize: "64px 64px" }} />
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
