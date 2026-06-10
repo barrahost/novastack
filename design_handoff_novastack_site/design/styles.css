@@ -1,34 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 /* ============================================================
    NovaStack Africa — redesign
    Warm-editorial / African-anchored / serious software
    ============================================================ */
 
 :root {
-  /* dark navy base */
-  --paper:      oklch(0.168 0.022 258);
-  --paper-2:    oklch(0.205 0.025 260);
-  --card:       oklch(0.224 0.027 260);
-  --ink:        oklch(0.972 0.006 250);
-  --ink-soft:   oklch(0.722 0.026 256);
+  /* dark navy base (matches existing novastack.africa) */
+  --paper:      oklch(0.168 0.022 258);   /* main background */
+  --paper-2:    oklch(0.205 0.025 260);   /* raised sections */
+  --card:       oklch(0.224 0.027 260);   /* cards / panels */
+  --ink:        oklch(0.972 0.006 250);   /* near-white text */
+  --ink-soft:   oklch(0.722 0.026 256);   /* muted blue-gray */
   --ink-faint:  oklch(0.585 0.027 258);
   --line:       oklch(0.315 0.030 260);
   --line-soft:  oklch(0.262 0.028 260);
 
-  --blue:       oklch(0.620 0.078 248);
+  /* ORANGE = primary brand + action.  BLUE = sober steel, minimal (data only). */
+  --blue:       oklch(0.620 0.078 248);   /* muted steel */
   --blue-deep:  oklch(0.520 0.082 250);
   --blue-soft:  oklch(0.715 0.058 246);
-  --clay:       oklch(0.730 0.170 53);
-  --clay-deep:  oklch(0.660 0.168 47);
-  --clay-bright:oklch(0.770 0.150 60);
-  --clay-tint:  oklch(0.815 0.110 64);
-  --on-clay:    oklch(0.205 0.030 50);
+  --clay:       oklch(0.730 0.170 53);    /* orange — the brand */
+  --clay-deep:  oklch(0.660 0.168 47);    /* deeper orange (hover/press) */
+  --clay-bright:oklch(0.770 0.150 60);    /* bright orange (emphasis text) */
+  --clay-tint:  oklch(0.815 0.110 64);    /* light orange */
+  --on-clay:    oklch(0.205 0.030 50);    /* warm near-black for text on orange */
   --sand:       oklch(0.205 0.025 260);
 
-  --ink-rev:    oklch(0.198 0.028 262);
+  --ink-rev:    oklch(0.198 0.028 262);  /* deeper feature panels */
 
   --maxw: 1200px;
   --pad: clamp(20px, 5vw, 64px);
@@ -98,6 +95,7 @@ a { color: inherit; text-decoration: none; }
   flex: none;
 }
 .ic svg { width: 100%; height: 100%; display: block; }
+/* the signature terracotta node */
 .ic .nd  { stroke: var(--clay); }
 .ic .ndl { stroke: var(--clay); }
 .ic .nds { stroke: var(--clay); }
@@ -195,7 +193,7 @@ a { color: inherit; text-decoration: none; }
 .pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--clay); box-shadow: 0 0 0 0 var(--clay); animation: pulse 2.4s infinite; }
 @keyframes pulse { 0%{box-shadow:0 0 0 0 oklch(0.62 0.146 46 / .5);} 70%{box-shadow:0 0 0 10px oklch(0.62 0.146 46 / 0);} 100%{box-shadow:0 0 0 0 oklch(0.62 0.146 46 / 0);} }
 
-/* marquee strip */
+/* marquee strip of trust words */
 .strip { border-block: 1px solid var(--line); background: var(--paper-2); overflow: hidden; }
 .strip-track { display: flex; gap: 56px; padding: 16px 0; white-space: nowrap; width: max-content; animation: slide 32s linear infinite; }
 .strip:hover .strip-track { animation-play-state: paused; }
@@ -212,7 +210,7 @@ section { position: relative; }
 .sec-head.center { margin-inline: auto; text-align: center; }
 .sec-head.center .eyebrow { justify-content: center; }
 
-/* who we are */
+/* who we are — short band */
 .who { background: var(--sand); }
 .who-in { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: clamp(28px,5vw,72px); align-items: start; }
 .who p.big { font-family: var(--f-display); font-weight: 500; font-size: clamp(1.4rem, 2.6vw, 2.1rem); line-height: 1.28; letter-spacing: -0.015em; }
@@ -325,7 +323,9 @@ section { position: relative; }
 .foot-bot { margin-top: clamp(40px,5vw,64px); padding-top: 24px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: var(--ink-faint); font-size: 0.88rem; }
 .foot-bot .made { display: inline-flex; gap: 7px; }
 
-/* ====================================================== reveal */
+/* ====================================================== reveal
+   Base state is the VISIBLE end-state (never blank, even with no JS).
+   Entrance is a from-animation layered on when .in is added. */
 .rv { }
 .rv.in { animation: rvIn .72s cubic-bezier(.2,.7,.3,1); animation-delay: .05s; }
 .rv.in.d1 { animation-delay: .08s; }

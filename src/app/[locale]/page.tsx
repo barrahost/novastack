@@ -1,276 +1,556 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import { useTranslations, useLocale } from "next-intl";
-import { Zap, Code as Code2, ArrowRight, Sparkles, Shield, Globe, TrendingUp, CircleCheck as CheckCircle2, Brain, Layers, ChevronRight, LayoutDashboard, Users, Building2 } from "lucide-react";
+import { useLocale } from "next-intl";
+import { Icon } from "@/components/Icons";
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 28 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
-};
-const stagger = { visible: { transition: { staggerChildren: 0.09 } } };
+/* ------------------------------------------------------------------ */
+/* Pipeline bar data                                                    */
+/* ------------------------------------------------------------------ */
+const PIPE_ROWS: { label: string; base: number; phase: number }[] = [
+  { label: "Traitement de données", base: 0.48, phase: 0 },
+  { label: "Automatisation",        base: 0.33, phase: 1.3 },
+  { label: "Modèle prédictif",      base: 0.20, phase: 2.6 },
+  { label: "Flux simplifiés",       base: 0.56, phase: 3.9 },
+];
 
-function Section({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
-  return (
-    <motion.div ref={ref} variants={stagger} initial="hidden" animate={inView ? "visible" : "hidden"} className={className}>
-      {children}
-    </motion.div>
-  );
+const PIPE_STATS: { count: number; suffix: string; label: string }[] = [
+  { count: 68, suffix: "%",  label: "Tâches automatisées" },
+  { count: 3,  suffix: "×",  label: "Décisions plus rapides" },
+  { count: 24, suffix: "/7", label: "Traitement continu" },
+];
+
+/* ------------------------------------------------------------------ */
+/* easeOut cubic                                                        */
+/* ------------------------------------------------------------------ */
+function easeOut(t: number) {
+  return 1 - Math.pow(1 - t, 3);
 }
 
-const subServiceIcons = [Globe, Building2, Users, LayoutDashboard];
-const reasonIcons = [Sparkles, TrendingUp, Zap, Shield, Globe, Layers];
-const industries = ["Banking & Finance", "Telecom", "Logistics", "Datacenter", "Retail", "Government", "Healthcare"];
-
+/* ------------------------------------------------------------------ */
+/* Page component                                                       */
+/* ------------------------------------------------------------------ */
 export default function HomePage() {
-  const t = useTranslations("home");
   const locale = useLocale();
 
-  const subServices = [
-    { icon: subServiceIcons[0], title: t("sub1Title"), desc: t("sub1Desc") },
-    { icon: subServiceIcons[1], title: t("sub2Title"), desc: t("sub2Desc") },
-    { icon: subServiceIcons[2], title: t("sub3Title"), desc: t("sub3Desc") },
-    { icon: subServiceIcons[3], title: t("sub4Title"), desc: t("sub4Desc") },
-  ];
+  /* ----- nav state ----- */
+  const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("top");
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const reasons = [
-    { icon: reasonIcons[0], title: t("why1Title"), desc: t("why1Desc") },
-    { icon: reasonIcons[1], title: t("why2Title"), desc: t("why2Desc") },
-    { icon: reasonIcons[2], title: t("why3Title"), desc: t("why3Desc") },
-    { icon: reasonIcons[3], title: t("why4Title"), desc: t("why4Desc") },
-    { icon: reasonIcons[4], title: t("why5Title"), desc: t("why5Desc") },
-    { icon: reasonIcons[5], title: t("why6Title"), desc: t("why6Desc") },
-  ];
+  /* ----- pipeline state ----- */
+  const [pipeStarted, setPipeStarted] = useState(false);
+  const [barWidths, setBarWidths] = useState<number[]>(PIPE_ROWS.map(() => 0));
+  const [pcts, setPcts] = useState<number[]>(PIPE_ROWS.map(() => 0));
+  const [counters, setCounters] = useState<string[]>(
+    PIPE_STATS.map((s) => "0" + s.suffix)
+  );
 
+  /* ----- refs for sections ----- */
+  const pipeRef = useRef<HTMLDivElement>(null);
+  const rafRef = useRef<number>(0);
+
+  /* ----- reveal: IntersectionObserver on .rv elements ----- */
+  useEffect(() => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const elements = document.querySelectorAll<HTMLElement>(".rv");
+
+    if (reduce) {
+      elements.forEach((el) => el.classList.add("in"));
+      return;
+    }
+
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in");
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0, rootMargin: "0px 0px -10% 0px" }
+    );
+
+    elements.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
+  /* ----- scroll: nav scrolled + scroll-spy ----- */
+  useEffect(() => {
+    const SECTIONS = ["top", "about", "services", "contact"];
+
+    function onScroll() {
+      setScrolled(window.scrollY > 8);
+
+      const mid = window.innerHeight * 0.4;
+      let current = "top";
+      for (const id of SECTIONS) {
+        const el = document.getElementById(id);
+        if (el) {
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= mid) current = id;
+        }
+      }
+      setActiveSection(current);
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  /* ----- pipeline: start when #pipe enters viewport ----- */
+  const startPipeline = useCallback(() => {
+    if (pipeStarted) return;
+    setPipeStarted(true);
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const t0 = performance.now();
+    const dur = 1400;
+
+    // Animate counters
+    PIPE_STATS.forEach((stat) => {
+      (function step(now: number) {
+        const p = Math.min(1, (now - t0) / dur);
+        const val = Math.round(stat.count * easeOut(p));
+        setCounters((prev) => {
+          const next = [...prev];
+          next[PIPE_STATS.indexOf(stat)] = val + stat.suffix;
+          return next;
+        });
+        if (p < 1) requestAnimationFrame(step);
+      })(t0);
+    });
+
+    if (reduce) {
+      setBarWidths(PIPE_ROWS.map((r) => Math.min(0.95, r.base + 0.4) * 100));
+      setPcts(PIPE_ROWS.map((r) => Math.round(Math.min(0.95, r.base + 0.4) * 100)));
+      return;
+    }
+
+    // Wobble animation
+    function runPipe() {
+      const t = performance.now() / 1000;
+      const widths: number[] = [];
+      const pctVals: number[] = [];
+      PIPE_ROWS.forEach((row) => {
+        const wobble = 0.12 * (0.5 + 0.5 * Math.sin(t * 0.7 + row.phase));
+        const val = Math.min(0.97, row.base + 0.28 + wobble);
+        widths.push(parseFloat((val * 100).toFixed(0)));
+        pctVals.push(Math.round(val * 100));
+      });
+      setBarWidths(widths);
+      setPcts(pctVals);
+      rafRef.current = requestAnimationFrame(runPipe);
+    }
+    rafRef.current = requestAnimationFrame(runPipe);
+  }, [pipeStarted]);
+
+  useEffect(() => {
+    const el = pipeRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          startPipeline();
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => {
+      obs.disconnect();
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [startPipeline]);
+
+  /* ----- drawer: lock body scroll ----- */
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [drawerOpen]);
+
+  const closeDrawer = () => setDrawerOpen(false);
+
+  /* ------------------------------------------------------------------ */
+  /* Render                                                               */
+  /* ------------------------------------------------------------------ */
   return (
-    <div className="relative overflow-hidden">
+    <>
+      {/* ============================================================ NAV */}
+      <header className={`nav${scrolled ? " scrolled" : ""}`} id="nav">
+        <div className="wrap nav-in">
+          <a className="brand" href="#top">
+            <Icon name="logo" />
+            <span><b>Nova</b><span className="a2">Stack</span></span>
+          </a>
 
-      {/* HERO */}
-      <section className="relative min-h-screen flex items-center pt-20">
-        {/* Background image */}
-        <div className="absolute inset-0 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: "url('/abidjan.webp')" }} />
-        {/* Dark overlay to keep text readable */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#03070F]/85 via-dark-900/90 to-dark-900" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-primary/10 rounded-full blur-[140px]" />
-        <div className="absolute top-20 right-1/3 w-48 h-48 bg-orange-primary/8 rounded-full blur-[80px]" />
-        <div className="absolute inset-0 opacity-[0.02]"
-          style={{ backgroundImage: `linear-gradient(rgba(26,107,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(26,107,255,1) 1px, transparent 1px)`, backgroundSize: "64px 64px" }} />
+          <nav className="nav-links">
+            <a href="#top"      className={activeSection === "top"      ? "active" : ""}>Accueil</a>
+            <a href="#about"    className={activeSection === "about"    ? "active" : ""}>À propos</a>
+            <a href="#services" className={activeSection === "services" ? "active" : ""}>Services</a>
+            <a href="#contact"  className={activeSection === "contact"  ? "active" : ""}>Contact</a>
+          </nav>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-          <div className="max-w-4xl">
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-              className="badge mb-8 w-fit">
-              <span className="w-1.5 h-1.5 bg-orange-primary animate-pulse" />
-              {t("heroBadge")}
-            </motion.div>
+          <div className="nav-right">
+            <div className="lang">
+              <Link href="/fr" className={locale === "fr" ? "on" : ""}>FR</Link>
+              <Link href="/en" className={locale === "en" ? "on" : ""}>EN</Link>
+            </div>
+            <a className="btn btn-primary" href="#contact">
+              Échangeons<Icon name="arrow" />
+            </a>
+            <button
+              className="menu-btn"
+              aria-label="Menu"
+              onClick={() => setDrawerOpen(true)}
+            >
+              <Icon name="platform" />
+            </button>
+          </div>
+        </div>
+      </header>
 
-            <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1 }}
-              className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl font-black tracking-tight leading-[1.04] mb-6">
-              <span className="text-white">{t("heroLine1")}</span><br />
-              <span className="text-gradient-orange">{t("heroLine2")}</span><br />
-              <span className="text-white">{t("heroLine3")}</span>
-            </motion.h1>
+      {/* ============================================================ DRAWER */}
+      <div className={`drawer${drawerOpen ? " open" : ""}`}>
+        <div className="drawer-top">
+          <a className="brand" href="#top" onClick={closeDrawer}>
+            <Icon name="logo" />
+            <span><b>Nova</b><span className="a2">Stack</span></span>
+          </a>
+          <button className="menu-btn" aria-label="Fermer" onClick={closeDrawer}>
+            <Icon name="check" />
+          </button>
+        </div>
+        <nav>
+          <a href="#top"      onClick={closeDrawer}>Accueil</a>
+          <a href="#about"    onClick={closeDrawer}>À propos</a>
+          <a href="#services" onClick={closeDrawer}>Services</a>
+          <a href="#contact"  onClick={closeDrawer}>Contact</a>
+        </nav>
+        <a className="btn btn-primary btn-lg" href="#contact" onClick={closeDrawer}>
+          Échangeons<Icon name="arrow" />
+        </a>
+      </div>
 
-            <motion.p initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.2 }}
-              className="text-lg sm:text-xl text-slate-text max-w-2xl mb-10 leading-relaxed">
-              {t("heroDesc")}
-            </motion.p>
+      <main id="top">
 
-            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.3 }}
-              className="flex flex-col sm:flex-row gap-4">
-              <Link href={`/${locale}/contact`} className="btn-primary group">
-                {t("ctaPrimary")}
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <Link href={`/${locale}/services`} className="btn-outline group">
-                {t("ctaSecondary")}
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-            </motion.div>
+        {/* ========================================================== HERO */}
+        <section className="hero">
+          <div className="wrap hero-grid">
+            <div className="hero-copy">
+              <span className="eyebrow rv">Une équipe technique née à Abidjan</span>
+              <h1 className="rv d1">
+                Nous construisons avec <em>rigueur.</em><br />
+                <span className="soft">Nous grandissons</span> avec vous.
+              </h1>
+              <p className="hero-sub rv d2">
+                NovaStack Africa conçoit des applications web, des plateformes métier et des tableaux de bord analytiques pour des organisations africaines qui ont de vrais problèmes à résoudre.
+              </p>
+              <div className="hero-cta rv d3">
+                <a className="btn btn-primary btn-lg" href="#contact">
+                  Échangeons<Icon name="arrow" />
+                </a>
+                <a className="btn btn-ghost btn-lg" href="#services">Nos services</a>
+              </div>
+            </div>
+
+            <div className="hero-art rv d2" aria-hidden="true">
+              <div className="stack-scene">
+                <div className="plate" style={{ opacity: 0.5, transform: "rotate(45deg) translate(0,46px) scale(.92)" }} />
+                <div className="plate" style={{ opacity: 0.78, transform: "rotate(45deg) translate(0,22px) scale(.96)" }} />
+                <div className="plate" style={{ transform: "rotate(45deg)" }} />
+              </div>
+              <div className="hero-tag t1">
+                <Icon name="ai" />
+                IA intégrée
+              </div>
+              <div className="hero-tag t2">
+                <span className="pulse-dot" />
+                En production
+              </div>
+              <div className="hero-tag t3">
+                <Icon name="stack" />
+                Stack moderne
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================== STRIP */}
+        <div className="strip" aria-hidden="true">
+          <div className="strip-track">
+            <span>Applications Web</span>
+            <span>Plateformes Métier</span>
+            <span>Portails Clients</span>
+            <span>Tableaux de bord &amp; BI</span>
+            <span>Automatisation</span>
+            <span>Modèles prédictifs</span>
+            <span>Applications Web</span>
+            <span>Plateformes Métier</span>
+            <span>Portails Clients</span>
+            <span>Tableaux de bord &amp; BI</span>
+            <span>Automatisation</span>
+            <span>Modèles prédictifs</span>
+          </div>
+        </div>
+
+        {/* ========================================================== WHO */}
+        <section className="who" id="about">
+          <div className="wrap sec who-in">
+            <div className="rv">
+              <span className="eyebrow">Qui nous sommes</span>
+            </div>
+            <p className="big rv d1">
+              Nous sommes au début. Nous en sommes conscients — et c&apos;est ce qui nous pousse à travailler avec{" "}
+              <b>plus de soin, plus d&apos;écoute et plus d&apos;engagement.</b>{" "}
+              Chaque projet compte pour nous.
+            </p>
+          </div>
+        </section>
+
+        {/* ========================================================== SERVICES */}
+        <section className="sec wrap" id="services">
+          <div className="svc-top">
+            <div className="sec-head rv">
+              <span className="eyebrow">Ce que nous construisons</span>
+              <h2>Développement d&apos;applications, du premier croquis à la production.</h2>
+            </div>
+            <div className="rv d1">
+              <p className="lead">
+                Des outils internes aux plateformes clients, nous construisons des applications web modernes, rapides et fiables, pensées pour évoluer avec votre activité.
+              </p>
+              <p className="lead">
+                Chaque projet démarre par une compréhension approfondie de vos processus — puis un logiciel qui s&apos;y adapte précisément, sans complexité inutile.
+              </p>
+            </div>
+          </div>
+          <div className="svc-grid">
+            <article className="svc-card rv">
+              <span className="num">01</span>
+              <Icon name="apps" />
+              <h3>Applications Web</h3>
+              <p>Applications full-stack — performantes, sécurisées, prêtes pour la production.</p>
+            </article>
+            <article className="svc-card rv d1">
+              <span className="num">02</span>
+              <Icon name="platform" />
+              <h3>Plateformes Métier</h3>
+              <p>Plateformes opérationnelles qui centralisent vos processus clés.</p>
+            </article>
+            <article className="svc-card rv d2">
+              <span className="num">03</span>
+              <Icon name="portal" />
+              <h3>Portails Clients</h3>
+              <p>Portails sécurisés et personnalisés pour un accès client en temps réel.</p>
+            </article>
+            <article className="svc-card rv d3">
+              <span className="num">04</span>
+              <Icon name="dashboard" />
+              <h3>Tableaux de bord &amp; BI</h3>
+              <p>Analytiques interactives qui transforment vos données en décisions.</p>
+            </article>
+          </div>
+        </section>
+
+        {/* ========================================================== AI */}
+        <section className="ai">
+          <div className="wrap sec ai-grid">
+            <div className="rv">
+              <span className="eyebrow">Notre approche IA</span>
+              <h2>L&apos;intelligence au <em>cœur</em> de chaque solution</h2>
+              <p style={{ marginTop: "20px", color: "oklch(0.82 0.01 70)", fontSize: "1.08rem" }}>
+                Nous n&apos;ajoutons pas l&apos;IA en fin de parcours. Dès la conception, nous réfléchissons à comment l&apos;automatisation, la prédiction et le traitement des données peuvent alléger le travail de vos équipes.
+              </p>
+              <ul className="ai-list">
+                <li><Icon name="check" />Automatisation de flux métier répétitifs</li>
+                <li><Icon name="check" />Outils d&apos;aide à la décision basés sur vos données</li>
+                <li><Icon name="check" />Modèles prédictifs adaptés à votre secteur</li>
+                <li><Icon name="check" />Interfaces en langage naturel pour vos systèmes existants</li>
+              </ul>
+            </div>
+
+            {/* Pipeline panel */}
+            <div className="pipe rv d2" id="pipe" ref={pipeRef}>
+              <div className="pipe-head">
+                <Icon name="ai" style={{ width: "20px", height: "20px", color: "var(--clay-tint)" }} />
+                Pipeline NovaStack
+                <span className="live">
+                  <span className="pulse-dot" style={{ background: "var(--blue)" }} />
+                  En cours d&apos;analyse
+                </span>
+              </div>
+              <div className="pipe-rows">
+                {PIPE_ROWS.map((row, i) => (
+                  <div className="pipe-row" key={row.label}>
+                    <div className="lbl">
+                      <b>{row.label}</b>
+                      <span className="pct">{pcts[i]}%</span>
+                    </div>
+                    <div className="bar">
+                      <i style={{ width: `${barWidths[i]}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="pipe-foot">
+                {PIPE_STATS.map((stat, i) => (
+                  <div className="stat" key={stat.label}>
+                    <div className="v">{counters[i]}</div>
+                    <div className="k">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================== WHY */}
+        <section className="sec wrap">
+          <div className="sec-head rv">
+            <span className="eyebrow">Pourquoi NovaStack</span>
+            <h2>Ce que nous apportons</h2>
+            <p>Des fondamentaux solides, une vraie écoute, et des solutions qui servent réellement votre activité.</p>
+          </div>
+          <div className="why-grid">
+            <article className="why-card rv">
+              <Icon name="ai" />
+              <h3>IA utile, pas décorative</h3>
+              <p>L&apos;IA que nous intégrons résout un problème réel ou elle n&apos;y est pas. Pas de buzzwords, pas de gadgets.</p>
+            </article>
+            <article className="why-card rv d1">
+              <Icon name="business" />
+              <h3>Le métier avant la technique</h3>
+              <p>Chaque décision technique est ancrée dans vos objectifs. Nous construisons ce dont vous avez besoin.</p>
+            </article>
+            <article className="why-card rv d2">
+              <Icon name="execution" />
+              <h3>Exécution maîtrisée</h3>
+              <p>Des cycles courts, des jalons clairs et une communication continue. Vous n&apos;êtes jamais dans le flou.</p>
+            </article>
+            <article className="why-card rv">
+              <Icon name="durable" />
+              <h3>Construit pour durer</h3>
+              <p>Architecture soignée, code maintenable, déploiement stable. Le travail bien fait dès le départ.</p>
+            </article>
+            <article className="why-card rv d1">
+              <Icon name="africa" />
+              <h3>Ancré en Afrique</h3>
+              <p>Nous comprenons les contraintes d&apos;infrastructure, les réalités locales et les ambitions des organisations africaines.</p>
+            </article>
+            <article className="why-card rv d2">
+              <Icon name="stack" />
+              <h3>Stack moderne</h3>
+              <p>Des technologies choisies pour leur pertinence et leur maintenabilité à long terme.</p>
+            </article>
+          </div>
+        </section>
+
+        {/* ========================================================== INDUSTRIES */}
+        <section className="ind">
+          <div className="wrap sec">
+            <div className="sec-head rv">
+              <span className="eyebrow">Secteurs</span>
+              <h2>Les secteurs que nous ciblons</h2>
+            </div>
+            <div className="ind-grid">
+              <div className="ind-card rv"><Icon name="finance" />Banking &amp; Finance</div>
+              <div className="ind-card rv d1"><Icon name="telecom" />Telecom</div>
+              <div className="ind-card rv d2"><Icon name="logistics" />Logistics</div>
+              <div className="ind-card rv d3"><Icon name="datacenter" />Datacenter</div>
+              <div className="ind-card rv"><Icon name="retail" />Retail</div>
+              <div className="ind-card rv d1"><Icon name="government" />Government</div>
+              <div className="ind-card rv d2"><Icon name="healthcare" />Healthcare</div>
+              <a className="ind-card more rv d3" href="#contact">
+                Voir tous les secteurs<Icon name="arrow" />
+              </a>
+            </div>
+          </div>
+        </section>
+
+        {/* ========================================================== CTA */}
+        <section className="sec wrap" id="contact">
+          <div className="cta-band rv">
+            <div className="cta-glow" />
+            <div className="cta-glow two" />
+            <span className="eyebrow">Prêt à démarrer&nbsp;?</span>
+            <h2>Construisons ensemble, <em>solidement.</em></h2>
+            <p>Parlez-nous de votre défi. Nous vous écoutons avant de proposer quoi que ce soit.</p>
+            <div className="cta-row">
+              <a className="btn btn-primary btn-lg" href="mailto:contact@novastack.africa">
+                Échangeons<Icon name="arrow" />
+              </a>
+              <a className="btn btn-ghost btn-lg" href="#about">En savoir plus</a>
+            </div>
+          </div>
+        </section>
+
+      </main>
+
+      {/* ========================================================== FOOTER */}
+      <footer className="foot">
+        <div className="wrap">
+          <div className="foot-grid">
+            <div>
+              <div className="brand">
+                <Icon name="logo" />
+                <span><b>Nova</b><span className="a2">Stack</span></span>
+              </div>
+              <p className="blurb">
+                Une équipe technique née à Abidjan, qui construit des logiciels sérieux pour des organisations africaines qui avancent.
+              </p>
+              <div className="foot-contact">
+                <a href="mailto:contact@novastack.africa">
+                  <Icon name="mail" />
+                  contact@novastack.africa
+                </a>
+                <span>
+                  <Icon name="pin" />
+                  Abidjan, Côte d&apos;Ivoire
+                </span>
+                <a href="https://www.linkedin.com/company/novastack-africa" target="_blank" rel="noopener noreferrer">
+                  <Icon name="linkedin" />
+                  LinkedIn
+                </a>
+              </div>
+            </div>
+
+            <div className="foot-col">
+              <h4>Entreprise</h4>
+              <ul>
+                <li><a href="#about">À propos</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </div>
+
+            <div className="foot-col">
+              <h4>Services</h4>
+              <ul>
+                <li><a href="#services">Applications Web</a></li>
+                <li><a href="#services">Plateformes Métier</a></li>
+                <li><a href="#services">Tableaux de bord &amp; BI</a></li>
+              </ul>
+            </div>
+
+            <div className="foot-col">
+              <h4>Langue</h4>
+              <ul>
+                <li><Link href="/fr">Français</Link></li>
+                <li><Link href="/en">English</Link></li>
+              </ul>
+            </div>
           </div>
 
-          {/* Honest intro paragraph — replaces fabricated stats */}
-          <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.55 }}
-            className="mt-20 max-w-2xl border-l-2 border-orange-primary/40 pl-6">
-            <p className="text-xs text-orange-primary uppercase tracking-widest font-semibold mb-3">{t("introLabel")}</p>
-            <p className="text-slate-text leading-relaxed">{t("introText")}</p>
-          </motion.div>
+          <div className="foot-bot">
+            <span>© 2026 NovaStack Africa. Tous droits réservés.</span>
+            <span className="made">Conçu avec soin à Abidjan <span>🇨🇮</span></span>
+          </div>
         </div>
-      </section>
-
-      {/* SERVICES */}
-      <section className="relative py-24 lg:py-32 border-t border-slate-border/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Section>
-            <div className="grid lg:grid-cols-2 gap-16 items-start">
-              <motion.div variants={fadeUp}>
-                <p className="label-orange mb-3">{t("servicesLabel")}</p>
-                <h2 className="text-4xl lg:text-5xl font-black text-white leading-tight mb-5">
-                  {t("servicesTitle")}
-                </h2>
-                <p className="text-slate-text leading-relaxed mb-6">{t("servicesDesc1")}</p>
-                <p className="text-slate-text leading-relaxed mb-8">{t("servicesDesc2")}</p>
-                <Link href={`/${locale}/services`} className="inline-flex items-center gap-2 text-orange-primary hover:text-orange-light text-sm font-semibold uppercase tracking-wider transition-colors group">
-                  {t("servicesCta")}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </motion.div>
-
-              <motion.div variants={stagger} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {subServices.map((s, idx) => {
-                  const Icon = s.icon;
-                  return (
-                    <motion.div key={s.title} variants={fadeUp} className="card-dark p-6 group transition-all duration-300">
-                      <div className={`mb-4 ${idx % 2 === 0 ? "icon-box-blue" : "icon-box-orange"}`}>
-                        <Icon className={`w-4 h-4 ${idx % 2 === 0 ? "text-white" : "text-orange-primary"}`} />
-                      </div>
-                      <h3 className="text-white font-bold mb-2 text-sm">{s.title}</h3>
-                      <p className="text-slate-text text-xs leading-relaxed">{s.desc}</p>
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            </div>
-          </Section>
-        </div>
-      </section>
-
-      {/* AI EXPERTISE */}
-      <section className="relative py-24 border-t border-slate-border/20">
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-80 h-80 bg-blue-primary/6 rounded-full blur-[100px]" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Section>
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <motion.div variants={fadeUp}>
-                <p className="label-orange mb-3">{t("aiLabel")}</p>
-                <h2 className="text-4xl lg:text-5xl font-black text-white mb-5 leading-tight">
-                  {t("aiTitle")}{" "}
-                  <span className="text-gradient-orange">{t("aiTitleHighlight")}</span>
-                </h2>
-                <p className="text-slate-text leading-relaxed mb-6">{t("aiDesc")}</p>
-                <ul className="space-y-3 mb-8">
-                  {([t("aiPoint1"), t("aiPoint2"), t("aiPoint3"), t("aiPoint4")] as string[]).map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-slate-text">
-                      <CheckCircle2 className="w-4 h-4 text-orange-primary flex-shrink-0 mt-0.5" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link href={`/${locale}/services`} className="btn-outline w-fit">
-                  {t("aiCta")} <ArrowRight className="w-4 h-4" />
-                </Link>
-              </motion.div>
-
-              <motion.div variants={fadeUp}>
-                <div className="relative card-dark p-8 aspect-square max-w-sm mx-auto">
-                  <div className="flex items-center justify-center h-full">
-                    <div className="relative w-40 h-40">
-                      <div className="absolute inset-0 border border-blue-primary/20 animate-spin-slow" style={{ borderRadius: 0 }} />
-                      <div className="absolute inset-6 border border-orange-primary/20 animate-spin-slow" style={{ animationDirection: "reverse", animationDuration: "12s", borderRadius: 0 }} />
-                      <div className="absolute inset-12 bg-blue-secondary/30 border border-blue-primary/30 flex items-center justify-center">
-                        <Brain className="w-8 h-8 text-blue-light" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 right-4 card-dark p-3 text-xs min-w-[130px]">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <div className="w-1.5 h-1.5 bg-green-400 animate-pulse" />
-                      <span className="font-semibold text-white">{t("aiFloatAgent")}</span>
-                    </div>
-                    <span className="text-slate-text">{t("aiFloatTasks")}</span>
-                  </div>
-                  <div className="absolute bottom-4 left-4 card-dark p-3 text-xs min-w-[130px]">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <div className="w-1.5 h-1.5 bg-orange-primary animate-pulse" />
-                      <span className="font-semibold text-white">{t("aiFloatAuto")}</span>
-                    </div>
-                    <span className="text-slate-text">{t("aiFloatPct")}</span>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </Section>
-        </div>
-      </section>
-
-      {/* WHY NOVASTACK */}
-      <section className="py-24 border-t border-slate-border/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Section>
-            <motion.div variants={fadeUp} className="mb-14">
-              <p className="label-blue mb-3">{t("whyLabel")}</p>
-              <h2 className="text-4xl lg:text-5xl font-black text-white max-w-xl leading-tight">{t("whyTitle")}</h2>
-              <p className="text-slate-text mt-3 max-w-lg">{t("whyDesc")}</p>
-            </motion.div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-slate-border/20 border border-slate-border/20">
-              {reasons.map((r, i) => {
-                const Icon = r.icon;
-                return (
-                  <motion.div key={r.title} variants={fadeUp} className="card-dark p-6 group transition-all duration-300">
-                    <div className={`mb-4 ${i % 2 === 0 ? "icon-box-blue" : "icon-box-orange"}`}>
-                      <Icon className={`w-4 h-4 ${i % 2 === 0 ? "text-white" : "text-orange-primary"}`} />
-                    </div>
-                    <h3 className="text-white font-bold mb-2">{r.title}</h3>
-                    <p className="text-slate-text text-sm leading-relaxed">{r.desc}</p>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </Section>
-        </div>
-      </section>
-
-      {/* INDUSTRIES */}
-      <section className="py-16 border-t border-slate-border/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Section>
-            <motion.div variants={fadeUp} className="mb-10">
-              <p className="label-orange mb-3">{t("industriesLabel")}</p>
-              <h2 className="text-3xl font-black text-white">{t("industriesTitle")}</h2>
-            </motion.div>
-            <motion.div variants={stagger} className="flex flex-wrap gap-2">
-              {industries.map((ind) => (
-                <motion.span key={ind} variants={fadeUp}
-                  className="px-4 py-2.5 border border-slate-border/50 text-slate-text text-xs font-semibold uppercase tracking-wider hover:border-orange-primary/50 hover:text-orange-primary transition-all cursor-default">
-                  {ind}
-                </motion.span>
-              ))}
-            </motion.div>
-            <motion.div variants={fadeUp} className="mt-6">
-              <Link href={`/${locale}/industries`} className="inline-flex items-center gap-2 text-orange-primary text-xs font-semibold uppercase tracking-wider hover:text-orange-light transition-colors">
-                {t("industriesCta")} <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </motion.div>
-          </Section>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-24 border-t border-slate-border/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-primary/5 via-transparent to-orange-primary/5" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-blue-primary/6 rounded-full blur-[100px]" />
-        <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <Section>
-            <motion.p variants={fadeUp} className="label-orange mb-5">{t("ctaLabel")}</motion.p>
-            <motion.h2 variants={fadeUp} className="text-4xl lg:text-5xl font-black text-white mb-5 leading-tight">
-              {t("ctaTitle")} <span className="text-gradient-blue">{t("ctaTitleHighlight")}</span>
-            </motion.h2>
-            <motion.p variants={fadeUp} className="text-slate-text text-lg mb-10">{t("ctaDesc")}</motion.p>
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href={`/${locale}/contact`} className="btn-primary group">
-                {t("ctaBtn")}
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-              </Link>
-              <Link href={`/${locale}/about`} className="btn-outline">{t("ctaAbout")}</Link>
-            </motion.div>
-          </Section>
-        </div>
-      </section>
-    </div>
+      </footer>
+    </>
   );
 }
