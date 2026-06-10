@@ -2,23 +2,23 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@/components/Icons";
 
 /* ------------------------------------------------------------------ */
-/* Pipeline bar data                                                    */
+/* Pipeline bar shape (labels filled inside component via t())         */
 /* ------------------------------------------------------------------ */
-const PIPE_ROWS: { label: string; base: number; phase: number }[] = [
-  { label: "Traitement de données", base: 0.48, phase: 0 },
-  { label: "Automatisation",        base: 0.33, phase: 1.3 },
-  { label: "Modèle prédictif",      base: 0.20, phase: 2.6 },
-  { label: "Flux simplifiés",       base: 0.56, phase: 3.9 },
+const PIPE_ROW_META: { base: number; phase: number }[] = [
+  { base: 0.48, phase: 0 },
+  { base: 0.33, phase: 1.3 },
+  { base: 0.20, phase: 2.6 },
+  { base: 0.56, phase: 3.9 },
 ];
 
-const PIPE_STATS: { count: number; suffix: string; label: string }[] = [
-  { count: 68, suffix: "%",  label: "Tâches automatisées" },
-  { count: 3,  suffix: "×",  label: "Décisions plus rapides" },
-  { count: 24, suffix: "/7", label: "Traitement continu" },
+const PIPE_STAT_META: { count: number; suffix: string }[] = [
+  { count: 68, suffix: "%" },
+  { count: 3,  suffix: "×" },
+  { count: 24, suffix: "/7" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -33,6 +33,20 @@ function easeOut(t: number) {
 /* ------------------------------------------------------------------ */
 export default function HomePage() {
   const locale = useLocale();
+  const t  = useTranslations("home");
+  const tn = useTranslations("nav");
+  const tf = useTranslations("footer");
+
+  /* Translated data arrays (must be inside component) */
+  const PIPE_ROWS = PIPE_ROW_META.map((r, i) => ({
+    ...r,
+    label: t(`pipeRow${i + 1}` as Parameters<typeof t>[0]),
+  }));
+
+  const PIPE_STATS = PIPE_STAT_META.map((s, i) => ({
+    ...s,
+    label: t(`pipeStat${i + 1}Label` as Parameters<typeof t>[0]),
+  }));
 
   /* ----- nav state ----- */
   const [scrolled, setScrolled] = useState(false);
@@ -146,7 +160,7 @@ export default function HomePage() {
       rafRef.current = requestAnimationFrame(runPipe);
     }
     rafRef.current = requestAnimationFrame(runPipe);
-  }, [pipeStarted]);
+  }, [pipeStarted]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const el = pipeRef.current;
@@ -189,10 +203,10 @@ export default function HomePage() {
           </a>
 
           <nav className="nav-links">
-            <a href="#top"      className={activeSection === "top"      ? "active" : ""}>Accueil</a>
-            <a href="#about"    className={activeSection === "about"    ? "active" : ""}>À propos</a>
-            <a href="#services" className={activeSection === "services" ? "active" : ""}>Services</a>
-            <a href="#contact"  className={activeSection === "contact"  ? "active" : ""}>Contact</a>
+            <a href="#top"      className={activeSection === "top"      ? "active" : ""}>{tn("home")}</a>
+            <a href="#about"    className={activeSection === "about"    ? "active" : ""}>{tn("about")}</a>
+            <a href="#services" className={activeSection === "services" ? "active" : ""}>{tn("services")}</a>
+            <a href="#contact"  className={activeSection === "contact"  ? "active" : ""}>{tn("contact")}</a>
           </nav>
 
           <div className="nav-right">
@@ -201,7 +215,7 @@ export default function HomePage() {
               <Link href="/en" className={locale === "en" ? "on" : ""}>EN</Link>
             </div>
             <a className="btn btn-primary" href="#contact">
-              Échangeons<Icon name="arrow" />
+              {tn("bookCall")}<Icon name="arrow" />
             </a>
             <button
               className="menu-btn"
@@ -226,13 +240,13 @@ export default function HomePage() {
           </button>
         </div>
         <nav>
-          <a href="#top"      onClick={closeDrawer}>Accueil</a>
-          <a href="#about"    onClick={closeDrawer}>À propos</a>
-          <a href="#services" onClick={closeDrawer}>Services</a>
-          <a href="#contact"  onClick={closeDrawer}>Contact</a>
+          <a href="#top"      onClick={closeDrawer}>{tn("home")}</a>
+          <a href="#about"    onClick={closeDrawer}>{tn("about")}</a>
+          <a href="#services" onClick={closeDrawer}>{tn("services")}</a>
+          <a href="#contact"  onClick={closeDrawer}>{tn("contact")}</a>
         </nav>
         <a className="btn btn-primary btn-lg" href="#contact" onClick={closeDrawer}>
-          Échangeons<Icon name="arrow" />
+          {tn("bookCall")}<Icon name="arrow" />
         </a>
       </div>
 
@@ -242,19 +256,19 @@ export default function HomePage() {
         <section className="hero">
           <div className="wrap hero-grid">
             <div className="hero-copy">
-              <span className="eyebrow rv">Une équipe technique née à Abidjan</span>
+              <span className="eyebrow rv">{t("heroBadge")}</span>
               <h1 className="rv d1">
-                Nous construisons avec <em>rigueur.</em><br />
-                <span className="soft">Nous grandissons</span> avec vous.
+                {t("heroLine1")} <em>{t("heroEm")}</em><br />
+                <span className="soft">{t("heroSoft")}</span> {t("heroLine2")}
               </h1>
               <p className="hero-sub rv d2">
-                NovaStack Africa conçoit des applications web, des plateformes métier et des tableaux de bord analytiques pour des organisations africaines qui ont de vrais problèmes à résoudre.
+                {t("heroDesc")}
               </p>
               <div className="hero-cta rv d3">
                 <a className="btn btn-primary btn-lg" href="#contact">
-                  Échangeons<Icon name="arrow" />
+                  {t("ctaPrimary")}<Icon name="arrow" />
                 </a>
-                <a className="btn btn-ghost btn-lg" href="#services">Nos services</a>
+                <a className="btn btn-ghost btn-lg" href="#services">{t("ctaSecondary")}</a>
               </div>
             </div>
 
@@ -266,15 +280,15 @@ export default function HomePage() {
               </div>
               <div className="hero-tag t1">
                 <Icon name="ai" />
-                IA intégrée
+                {t("heroTag1")}
               </div>
               <div className="hero-tag t2">
                 <span className="pulse-dot" />
-                En production
+                {t("heroTag2")}
               </div>
               <div className="hero-tag t3">
                 <Icon name="stack" />
-                Stack moderne
+                {t("heroTag3")}
               </div>
             </div>
           </div>
@@ -283,18 +297,18 @@ export default function HomePage() {
         {/* ========================================================== STRIP */}
         <div className="strip" aria-hidden="true">
           <div className="strip-track">
-            <span>Applications Web</span>
-            <span>Plateformes Métier</span>
-            <span>Portails Clients</span>
-            <span>Tableaux de bord &amp; BI</span>
-            <span>Automatisation</span>
-            <span>Modèles prédictifs</span>
-            <span>Applications Web</span>
-            <span>Plateformes Métier</span>
-            <span>Portails Clients</span>
-            <span>Tableaux de bord &amp; BI</span>
-            <span>Automatisation</span>
-            <span>Modèles prédictifs</span>
+            <span>{t("stripItem1")}</span>
+            <span>{t("stripItem2")}</span>
+            <span>{t("stripItem3")}</span>
+            <span>{t("stripItem4")}</span>
+            <span>{t("stripItem5")}</span>
+            <span>{t("stripItem6")}</span>
+            <span>{t("stripItem1")}</span>
+            <span>{t("stripItem2")}</span>
+            <span>{t("stripItem3")}</span>
+            <span>{t("stripItem4")}</span>
+            <span>{t("stripItem5")}</span>
+            <span>{t("stripItem6")}</span>
           </div>
         </div>
 
@@ -302,12 +316,12 @@ export default function HomePage() {
         <section className="who" id="about">
           <div className="wrap sec who-in">
             <div className="rv">
-              <span className="eyebrow">Qui nous sommes</span>
+              <span className="eyebrow">{t("whoEyebrow")}</span>
             </div>
             <p className="big rv d1">
-              Nous sommes au début. Nous en sommes conscients — et c&apos;est ce qui nous pousse à travailler avec{" "}
-              <b>plus de soin, plus d&apos;écoute et plus d&apos;engagement.</b>{" "}
-              Chaque projet compte pour nous.
+              {t("whoText")}{" "}
+              <b>{t("whoTextBold")}</b>{" "}
+              {t("whoTextEnd")}
             </p>
           </div>
         </section>
@@ -316,15 +330,15 @@ export default function HomePage() {
         <section className="sec wrap" id="services">
           <div className="svc-top">
             <div className="sec-head rv">
-              <span className="eyebrow">Ce que nous construisons</span>
-              <h2>Développement d&apos;applications, du premier croquis à la production.</h2>
+              <span className="eyebrow">{t("svcEyebrow")}</span>
+              <h2>{t("svcTitle")}</h2>
             </div>
             <div className="rv d1">
               <p className="lead">
-                Des outils internes aux plateformes clients, nous construisons des applications web modernes, rapides et fiables, pensées pour évoluer avec votre activité.
+                {t("svcLead1")}
               </p>
               <p className="lead">
-                Chaque projet démarre par une compréhension approfondie de vos processus — puis un logiciel qui s&apos;y adapte précisément, sans complexité inutile.
+                {t("svcLead2")}
               </p>
             </div>
           </div>
@@ -332,26 +346,26 @@ export default function HomePage() {
             <article className="svc-card rv">
               <span className="num">01</span>
               <Icon name="apps" />
-              <h3>Applications Web</h3>
-              <p>Applications full-stack — performantes, sécurisées, prêtes pour la production.</p>
+              <h3>{t("sub1Title")}</h3>
+              <p>{t("sub1Desc")}</p>
             </article>
             <article className="svc-card rv d1">
               <span className="num">02</span>
               <Icon name="platform" />
-              <h3>Plateformes Métier</h3>
-              <p>Plateformes opérationnelles qui centralisent vos processus clés.</p>
+              <h3>{t("sub2Title")}</h3>
+              <p>{t("sub2Desc")}</p>
             </article>
             <article className="svc-card rv d2">
               <span className="num">03</span>
               <Icon name="portal" />
-              <h3>Portails Clients</h3>
-              <p>Portails sécurisés et personnalisés pour un accès client en temps réel.</p>
+              <h3>{t("sub3Title")}</h3>
+              <p>{t("sub3Desc")}</p>
             </article>
             <article className="svc-card rv d3">
               <span className="num">04</span>
               <Icon name="dashboard" />
-              <h3>Tableaux de bord &amp; BI</h3>
-              <p>Analytiques interactives qui transforment vos données en décisions.</p>
+              <h3>{t("sub4Title")}</h3>
+              <p>{t("sub4Desc")}</p>
             </article>
           </div>
         </section>
@@ -360,16 +374,16 @@ export default function HomePage() {
         <section className="ai">
           <div className="wrap sec ai-grid">
             <div className="rv">
-              <span className="eyebrow">Notre approche IA</span>
-              <h2>L&apos;intelligence au <em>cœur</em> de chaque solution</h2>
+              <span className="eyebrow">{t("aiEyebrow")}</span>
+              <h2>{t("aiTitle")} <em>{t("aiTitleEm")}</em> {t("aiTitleEnd")}</h2>
               <p style={{ marginTop: "20px", color: "oklch(0.82 0.01 70)", fontSize: "1.08rem" }}>
-                Nous n&apos;ajoutons pas l&apos;IA en fin de parcours. Dès la conception, nous réfléchissons à comment l&apos;automatisation, la prédiction et le traitement des données peuvent alléger le travail de vos équipes.
+                {t("aiDesc")}
               </p>
               <ul className="ai-list">
-                <li><Icon name="check" />Automatisation de flux métier répétitifs</li>
-                <li><Icon name="check" />Outils d&apos;aide à la décision basés sur vos données</li>
-                <li><Icon name="check" />Modèles prédictifs adaptés à votre secteur</li>
-                <li><Icon name="check" />Interfaces en langage naturel pour vos systèmes existants</li>
+                <li><Icon name="check" />{t("aiPoint1")}</li>
+                <li><Icon name="check" />{t("aiPoint2")}</li>
+                <li><Icon name="check" />{t("aiPoint3")}</li>
+                <li><Icon name="check" />{t("aiPoint4")}</li>
               </ul>
             </div>
 
@@ -377,10 +391,10 @@ export default function HomePage() {
             <div className="pipe rv d2" id="pipe" ref={pipeRef}>
               <div className="pipe-head">
                 <Icon name="ai" style={{ width: "20px", height: "20px", color: "var(--clay-tint)" }} />
-                Pipeline NovaStack
+                {t("pipeTitle")}
                 <span className="live">
                   <span className="pulse-dot" style={{ background: "var(--blue)" }} />
-                  En cours d&apos;analyse
+                  {t("pipeLive")}
                 </span>
               </div>
               <div className="pipe-rows">
@@ -411,40 +425,40 @@ export default function HomePage() {
         {/* ========================================================== WHY */}
         <section className="sec wrap">
           <div className="sec-head rv">
-            <span className="eyebrow">Pourquoi NovaStack</span>
-            <h2>Ce que nous apportons</h2>
-            <p>Des fondamentaux solides, une vraie écoute, et des solutions qui servent réellement votre activité.</p>
+            <span className="eyebrow">{t("whyEyebrow")}</span>
+            <h2>{t("whyTitle")}</h2>
+            <p>{t("whyDesc")}</p>
           </div>
           <div className="why-grid">
             <article className="why-card rv">
               <Icon name="ai" />
-              <h3>IA utile, pas décorative</h3>
-              <p>L&apos;IA que nous intégrons résout un problème réel ou elle n&apos;y est pas. Pas de buzzwords, pas de gadgets.</p>
+              <h3>{t("why1Title")}</h3>
+              <p>{t("why1Desc")}</p>
             </article>
             <article className="why-card rv d1">
               <Icon name="business" />
-              <h3>Le métier avant la technique</h3>
-              <p>Chaque décision technique est ancrée dans vos objectifs. Nous construisons ce dont vous avez besoin.</p>
+              <h3>{t("why2Title")}</h3>
+              <p>{t("why2Desc")}</p>
             </article>
             <article className="why-card rv d2">
               <Icon name="execution" />
-              <h3>Exécution maîtrisée</h3>
-              <p>Des cycles courts, des jalons clairs et une communication continue. Vous n&apos;êtes jamais dans le flou.</p>
+              <h3>{t("why3Title")}</h3>
+              <p>{t("why3Desc")}</p>
             </article>
             <article className="why-card rv">
               <Icon name="durable" />
-              <h3>Construit pour durer</h3>
-              <p>Architecture soignée, code maintenable, déploiement stable. Le travail bien fait dès le départ.</p>
+              <h3>{t("why4Title")}</h3>
+              <p>{t("why4Desc")}</p>
             </article>
             <article className="why-card rv d1">
               <Icon name="africa" />
-              <h3>Ancré en Afrique</h3>
-              <p>Nous comprenons les contraintes d&apos;infrastructure, les réalités locales et les ambitions des organisations africaines.</p>
+              <h3>{t("why5Title")}</h3>
+              <p>{t("why5Desc")}</p>
             </article>
             <article className="why-card rv d2">
               <Icon name="stack" />
-              <h3>Stack moderne</h3>
-              <p>Des technologies choisies pour leur pertinence et leur maintenabilité à long terme.</p>
+              <h3>{t("why6Title")}</h3>
+              <p>{t("why6Desc")}</p>
             </article>
           </div>
         </section>
@@ -453,8 +467,8 @@ export default function HomePage() {
         <section className="ind">
           <div className="wrap sec">
             <div className="sec-head rv">
-              <span className="eyebrow">Secteurs</span>
-              <h2>Les secteurs que nous ciblons</h2>
+              <span className="eyebrow">{t("indEyebrow")}</span>
+              <h2>{t("indTitle")}</h2>
             </div>
             <div className="ind-grid">
               <div className="ind-card rv"><Icon name="finance" />Banking &amp; Finance</div>
@@ -465,7 +479,7 @@ export default function HomePage() {
               <div className="ind-card rv d1"><Icon name="government" />Government</div>
               <div className="ind-card rv d2"><Icon name="healthcare" />Healthcare</div>
               <a className="ind-card more rv d3" href="#contact">
-                Voir tous les secteurs<Icon name="arrow" />
+                {t("indMore")}<Icon name="arrow" />
               </a>
             </div>
           </div>
@@ -476,14 +490,14 @@ export default function HomePage() {
           <div className="cta-band rv">
             <div className="cta-glow" />
             <div className="cta-glow two" />
-            <span className="eyebrow">Prêt à démarrer&nbsp;?</span>
-            <h2>Construisons ensemble, <em>solidement.</em></h2>
-            <p>Parlez-nous de votre défi. Nous vous écoutons avant de proposer quoi que ce soit.</p>
+            <span className="eyebrow">{t("ctaEyebrow")}</span>
+            <h2>{t("ctaTitle")} <em>{t("ctaTitleEm")}</em></h2>
+            <p>{t("ctaDesc")}</p>
             <div className="cta-row">
               <a className="btn btn-primary btn-lg" href="mailto:contact@novastack.africa">
-                Échangeons<Icon name="arrow" />
+                {t("ctaBtn")}<Icon name="arrow" />
               </a>
-              <a className="btn btn-ghost btn-lg" href="#about">En savoir plus</a>
+              <a className="btn btn-ghost btn-lg" href="#about">{t("ctaAbout")}</a>
             </div>
           </div>
         </section>
@@ -500,7 +514,7 @@ export default function HomePage() {
                 <span><b>Nova</b><span className="a2">Stack</span></span>
               </div>
               <p className="blurb">
-                Une équipe technique née à Abidjan, qui construit des logiciels sérieux pour des organisations africaines qui avancent.
+                {tf("tagline")}
               </p>
               <div className="foot-contact">
                 <a href="mailto:contact@novastack.africa">
@@ -519,35 +533,35 @@ export default function HomePage() {
             </div>
 
             <div className="foot-col">
-              <h4>Entreprise</h4>
+              <h4>{tf("company")}</h4>
               <ul>
-                <li><a href="#about">À propos</a></li>
-                <li><a href="#services">Services</a></li>
-                <li><a href="#contact">Contact</a></li>
+                <li><a href="#about">{tn("about")}</a></li>
+                <li><a href="#services">{tn("services")}</a></li>
+                <li><a href="#contact">{tn("contact")}</a></li>
               </ul>
             </div>
 
             <div className="foot-col">
-              <h4>Services</h4>
+              <h4>{tf("services")}</h4>
               <ul>
-                <li><a href="#services">Applications Web</a></li>
-                <li><a href="#services">Plateformes Métier</a></li>
-                <li><a href="#services">Tableaux de bord &amp; BI</a></li>
+                <li><a href="#services">{t("sub1Title")}</a></li>
+                <li><a href="#services">{t("sub2Title")}</a></li>
+                <li><a href="#services">{t("sub4Title")}</a></li>
               </ul>
             </div>
 
             <div className="foot-col">
-              <h4>Langue</h4>
+              <h4>{tf("language")}</h4>
               <ul>
-                <li><Link href="/fr">Français</Link></li>
-                <li><Link href="/en">English</Link></li>
+                <li><Link href="/fr">{tf("langFr")}</Link></li>
+                <li><Link href="/en">{tf("langEn")}</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="foot-bot">
-            <span>© 2026 NovaStack Africa. Tous droits réservés.</span>
-            <span className="made">Conçu avec soin à Abidjan <span>🇨🇮</span></span>
+            <span>© 2026 NovaStack Africa. {tf("rights")}</span>
+            <span className="made">{tf("builtIn")} <span>🇨🇮</span></span>
           </div>
         </div>
       </footer>
