@@ -22,6 +22,23 @@ const PIPE_STAT_META: { count: number; suffix: string }[] = [
 ];
 
 /* ------------------------------------------------------------------ */
+/* Portfolio projects                                                   */
+/* ------------------------------------------------------------------ */
+const PROJECTS = [
+  { key:"p1",  catKey:"proj1Cat",  titleKey:"proj1Title",  descKey:"proj1Desc",  done:true },
+  { key:"p2",  catKey:"proj2Cat",  titleKey:"proj2Title",  descKey:"proj2Desc",  done:true },
+  { key:"p3",  catKey:"proj3Cat",  titleKey:"proj3Title",  descKey:"proj3Desc",  done:true },
+  { key:"p4",  catKey:"proj4Cat",  titleKey:"proj4Title",  descKey:"proj4Desc",  done:true },
+  { key:"p5",  catKey:"proj5Cat",  titleKey:"proj5Title",  descKey:"proj5Desc",  done:true },
+  { key:"p6",  catKey:"proj6Cat",  titleKey:"proj6Title",  descKey:"proj6Desc",  done:true },
+  { key:"p7",  catKey:"proj7Cat",  titleKey:"proj7Title",  descKey:"proj7Desc",  done:true },
+  { key:"p8",  catKey:"proj8Cat",  titleKey:"proj8Title",  descKey:"proj8Desc",  done:true },
+  { key:"p9",  catKey:"proj9Cat",  titleKey:"proj9Title",  descKey:"proj9Desc",  done:true },
+  { key:"p10", catKey:"proj10Cat", titleKey:"proj10Title", descKey:"proj10Desc", done:true },
+  { key:"p11", catKey:"proj11Cat", titleKey:"proj11Title", descKey:"proj11Desc", done:true },
+] as const;
+
+/* ------------------------------------------------------------------ */
 /* easeOut cubic                                                        */
 /* ------------------------------------------------------------------ */
 function easeOut(t: number) {
@@ -460,6 +477,29 @@ export default function HomePage() {
               <h3>{t("why6Title")}</h3>
               <p>{t("why6Desc")}</p>
             </article>
+          </div>
+        </section>
+
+        {/* ========================================================== PORTFOLIO */}
+        <section className="sec wrap" id="portfolio">
+          <div className="sec-head rv">
+            <span className="eyebrow">{t("portEyebrow")}</span>
+            <h2>{t("portTitle")}</h2>
+            <p>{t("portDesc")}</p>
+          </div>
+          <div className="port-grid">
+            {PROJECTS.map((p, i) => (
+              <article key={p.key} className={`port-card rv${i > 0 ? ` d${Math.min(i, 4)}` : ""}`}>
+                <div className="port-badges">
+                  <span className="port-cat">{t(p.catKey as Parameters<typeof t>[0])}</span>
+                  <span className="port-status">
+                    {p.done ? t("portDone") : t("portWip")}
+                  </span>
+                </div>
+                <h3>{t(p.titleKey as Parameters<typeof t>[0])}</h3>
+                <p>{t(p.descKey as Parameters<typeof t>[0])}</p>
+              </article>
+            ))}
           </div>
         </section>
 
