@@ -33,17 +33,17 @@ const PROJECTS: {
   url: string | null;
   stack: string[];
 }[] = [
-  { key:"p1",  catKey:"proj1Cat",  titleKey:"proj1Title",  descKey:"proj1Desc",  done:true, url:null,                         stack:["React","TypeScript","Supabase","Stripe"] },
-  { key:"p2",  catKey:"proj2Cat",  titleKey:"proj2Title",  descKey:"proj2Desc",  done:true, url:"https://cv.patricetano.com",  stack:["React","TypeScript","Vite"] },
-  { key:"p3",  catKey:"proj3Cat",  titleKey:"proj3Title",  descKey:"proj3Desc",  done:true, url:null,                         stack:["React","TypeScript","Firebase"] },
-  { key:"p4",  catKey:"proj4Cat",  titleKey:"proj4Title",  descKey:"proj4Desc",  done:true, url:null,                         stack:["React","TypeScript","Supabase","Express"] },
-  { key:"p5",  catKey:"proj5Cat",  titleKey:"proj5Title",  descKey:"proj5Desc",  done:true, url:"https://origin360.io",       stack:["React","TypeScript","Paystack"] },
-  { key:"p6",  catKey:"proj6Cat",  titleKey:"proj6Title",  descKey:"proj6Desc",  done:true, url:null,                         stack:["React","TypeScript","Supabase"] },
-  { key:"p7",  catKey:"proj7Cat",  titleKey:"proj7Title",  descKey:"proj7Desc",  done:true, url:null,                         stack:["HTML","CSS","JavaScript"] },
-  { key:"p8",  catKey:"proj8Cat",  titleKey:"proj8Title",  descKey:"proj8Desc",  done:true, url:null,                         stack:["React","TypeScript","Supabase","Express"] },
-  { key:"p9",  catKey:"proj9Cat",  titleKey:"proj9Title",  descKey:"proj9Desc",  done:true, url:null,                         stack:["React","TypeScript","Vite"] },
-  { key:"p10", catKey:"proj10Cat", titleKey:"proj10Title", descKey:"proj10Desc", done:true, url:"https://monitor.d-infras.africa", stack:["Cloudflare Workers","Supabase"] },
-  { key:"p11", catKey:"proj11Cat", titleKey:"proj11Title", descKey:"proj11Desc", done:true, url:"https://novastack.africa",   stack:["Next.js","TypeScript","Cloudflare Pages"] },
+  { key:"p1",  catKey:"proj1Cat",  titleKey:"proj1Title",  descKey:"proj1Desc",  done:true, url:"https://contemplationgospel.com",        stack:["React","TypeScript","Supabase","Stripe"] },
+  { key:"p2",  catKey:"proj2Cat",  titleKey:"proj2Title",  descKey:"proj2Desc",  done:true, url:"https://cv.patricetano.com",              stack:["React","TypeScript","Vite"] },
+  { key:"p3",  catKey:"proj3Cat",  titleKey:"proj3Title",  descKey:"proj3Desc",  done:true, url:"https://favho.org",                       stack:["React","TypeScript","Firebase"] },
+  { key:"p4",  catKey:"proj4Cat",  titleKey:"proj4Title",  descKey:"proj4Desc",  done:true, url:"https://www.porteursdevie.org",            stack:["React","TypeScript","Supabase","Express"] },
+  { key:"p5",  catKey:"proj5Cat",  titleKey:"proj5Title",  descKey:"proj5Desc",  done:true, url:"https://origin360.io",                    stack:["React","TypeScript","Paystack"] },
+  { key:"p6",  catKey:"proj6Cat",  titleKey:"proj6Title",  descKey:"proj6Desc",  done:true, url:"https://bergerie.evdh.org",               stack:["React","TypeScript","Supabase"] },
+  { key:"p7",  catKey:"proj7Cat",  titleKey:"proj7Title",  descKey:"proj7Desc",  done:true, url:"https://zoom.porteursdevie.org",           stack:["HTML","CSS","JavaScript"] },
+  { key:"p8",  catKey:"proj8Cat",  titleKey:"proj8Title",  descKey:"proj8Desc",  done:true, url:"https://d-infras.africa",                 stack:["React","TypeScript","Supabase","Express"] },
+  { key:"p9",  catKey:"proj9Cat",  titleKey:"proj9Title",  descKey:"proj9Desc",  done:true, url:"https://hebergement.novastack.africa",     stack:["React","TypeScript","Vite"] },
+  { key:"p10", catKey:"proj10Cat", titleKey:"proj10Title", descKey:"proj10Desc", done:true, url:"https://monitor.d-infras.africa",          stack:["Cloudflare Workers","Supabase"] },
+  { key:"p11", catKey:"proj11Cat", titleKey:"proj11Title", descKey:"proj11Desc", done:true, url:"https://novastack.africa",                stack:["Next.js","TypeScript","Cloudflare Pages"] },
 ];
 
 /* ------------------------------------------------------------------ */
