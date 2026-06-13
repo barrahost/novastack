@@ -362,6 +362,23 @@ section { position: relative; }
   color: oklch(0.72 0.14 148);
   border: 1px solid oklch(0.72 0.14 148 / 0.4);
 }
+.port-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+.port-tech {
+  font-family: var(--f-display);
+  font-size: 0.72rem; font-weight: 500;
+  padding: 3px 8px; border-radius: 6px;
+  background: var(--paper-2); color: var(--ink-soft);
+  border: 1px solid var(--line-soft);
+}
+.port-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 18px;
+  font-family: var(--f-display); font-size: 0.88rem; font-weight: 600;
+  color: var(--clay-bright); text-decoration: none;
+  transition: gap .2s;
+}
+.port-link:hover { gap: 10px; }
+.port-link .ic { width: 16px; height: 16px; }
 
 /* ====================================================== reveal */
 .rv { }
